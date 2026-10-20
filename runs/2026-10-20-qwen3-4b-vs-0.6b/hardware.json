@@ -1,0 +1,207 @@
+{
+  "provenance": "Original baseline and model allocations come from the recorded benchmark. The supplementary environment snapshot was collected while preparing this repository; it is not a concurrent benchmark measurement.",
+  "recorded_during_benchmark": {
+    "baseline_gpu": {
+      "monotonic_s": 31040.314892172,
+      "used_mib": 13.0,
+      "free_mib": 5793.0,
+      "utilization_pct": 6.0,
+      "temperature_c": 59.0
+    },
+    "baseline_memory": {
+      "MemTotal_kib": 15566716,
+      "MemAvailable_kib": 7145064,
+      "SwapTotal_kib": 8388604,
+      "SwapFree_kib": 3518708
+    },
+    "models": [
+      {
+        "model": "qwen3:4b",
+        "loaded_state": {
+          "models": [
+            {
+              "name": "qwen3:4b",
+              "model": "qwen3:4b",
+              "size": 3180247121,
+              "digest": "359d7dd4bcdab3d86b87d73ac27966f4dbb9f5efdfcc75d34a8764a09474fae7",
+              "details": {
+                "parent_model": "",
+                "format": "gguf",
+                "family": "qwen3",
+                "families": [
+                  "qwen3"
+                ],
+                "parameter_size": "4.0B",
+                "quantization_level": "Q4_K_M"
+              },
+              "expires_at": "2026-10-20T16:29:26.799472104-03:00",
+              "size_vram": 3180247121,
+              "context_length": 4096,
+              "runner": "llamacpp"
+            }
+          ]
+        },
+        "loaded_memory": {
+          "MemTotal_kib": 15566716,
+          "MemAvailable_kib": 6472384,
+          "SwapTotal_kib": 8388604,
+          "SwapFree_kib": 3518748
+        },
+        "summary": {
+          "short": {
+            "median_generation_tokens_s": 93.38982444901828,
+            "median_ttft_s": 0.2577375969995046,
+            "median_wall_s": 3.0059365810011514,
+            "prompt_tokens": [
+              91,
+              91,
+              91
+            ],
+            "generated_tokens": [
+              256,
+              256,
+              256
+            ]
+          },
+          "long": {
+            "median_generation_tokens_s": 83.8995185281927,
+            "median_ttft_s": 0.8788973370028543,
+            "median_wall_s": 3.9347835300031875,
+            "prompt_tokens": [
+              2664,
+              2664,
+              2664
+            ],
+            "generated_tokens": [
+              256,
+              256,
+              256
+            ]
+          },
+          "quality_passes": 6,
+          "quality_total": 6,
+          "quality_median_wall_s": 5.623129741999946,
+          "quality_truncated": 0,
+          "peak_gpu_used_mib": 3192.0,
+          "peak_gpu_utilization_pct": 100.0,
+          "peak_temperature_c": 85.0
+        }
+      },
+      {
+        "model": "qwen3:0.6b",
+        "loaded_state": {
+          "models": [
+            {
+              "name": "qwen3:0.6b",
+              "model": "qwen3:0.6b",
+              "size": 930401484,
+              "digest": "7df6b6e09427a769808717c0a93cadc4ae99ed4eb8bf5ca557c90846becea435",
+              "details": {
+                "parent_model": "",
+                "format": "gguf",
+                "family": "qwen3",
+                "families": [
+                  "qwen3"
+                ],
+                "parameter_size": "751.63M",
+                "quantization_level": "Q4_K_M"
+              },
+              "expires_at": "2026-10-20T16:30:28.527818355-03:00",
+              "size_vram": 930401484,
+              "context_length": 4096,
+              "runner": "llamacpp"
+            }
+          ]
+        },
+        "loaded_memory": {
+          "MemTotal_kib": 15566716,
+          "MemAvailable_kib": 6560120,
+          "SwapTotal_kib": 8388604,
+          "SwapFree_kib": 3526388
+        },
+        "summary": {
+          "short": {
+            "median_generation_tokens_s": 302.0556301517594,
+            "median_ttft_s": 0.19699125600163825,
+            "median_wall_s": 1.0383081850013696,
+            "prompt_tokens": [
+              91,
+              91,
+              91
+            ],
+            "generated_tokens": [
+              256,
+              256,
+              256
+            ]
+          },
+          "long": {
+            "median_generation_tokens_s": 234.79646998182162,
+            "median_ttft_s": 0.2660145650006598,
+            "median_wall_s": 1.351486757001112,
+            "prompt_tokens": [
+              2664,
+              2664,
+              2664
+            ],
+            "generated_tokens": [
+              256,
+              256,
+              256
+            ]
+          },
+          "quality_passes": 4,
+          "quality_total": 6,
+          "quality_median_wall_s": 1.1239164329999767,
+          "quality_truncated": 0,
+          "peak_gpu_used_mib": 1060.0,
+          "peak_gpu_utilization_pct": 96.0,
+          "peak_temperature_c": 86.0
+        }
+      }
+    ]
+  },
+  "supplementary_snapshot": {
+    "collected_at": "2026-10-20T17:44:24.864799-03:00",
+    "cpu": {
+      "Architecture": "x86_64",
+      "Model name": "AMD Ryzen 7 6800H with Radeon Graphics",
+      "CPU(s)": "16",
+      "Thread(s) per core": "2",
+      "Core(s) per socket": "8",
+      "Socket(s)": "1"
+    },
+    "gpu_query_fields": [
+      "name",
+      "memory.total (MiB)",
+      "driver_version"
+    ],
+    "gpu_query_output": "NVIDIA GeForce RTX 3060 Laptop GPU, 6144, 580.178.04",
+    "kernel": "7.2.10-100.fc43.x86_64",
+    "os": {
+      "NAME": "Fedora Linux",
+      "ID": "fedora",
+      "PRETTY_NAME": "Fedora Linux 43 (Workstation Edition)",
+      "VERSION": "43 (Workstation Edition)",
+      "RELEASE_TYPE": "stable",
+      "VERSION_ID": "43",
+      "VERSION_CODENAME": "",
+      "ANSI_COLOR": "0;38;2;60;110;180",
+      "LOGO": "fedora-logo-icon",
+      "CPE_NAME": "cpe:/o:fedoraproject:fedora:43",
+      "DEFAULT_HOSTNAME": "fedora",
+      "HOME_URL": "https://fedoraproject.org/",
+      "DOCUMENTATION_URL": "https://docs.fedoraproject.org/en-US/fedora/f43/",
+      "SUPPORT_URL": "https://ask.fedoraproject.org/",
+      "BUG_REPORT_URL": "https://bugzilla.redhat.com/",
+      "REDHAT_BUGZILLA_PRODUCT": "Fedora",
+      "REDHAT_BUGZILLA_PRODUCT_VERSION": "43",
+      "REDHAT_SUPPORT_PRODUCT": "Fedora",
+      "REDHAT_SUPPORT_PRODUCT_VERSION": "43",
+      "SUPPORT_END": "2026-12-02",
+      "VARIANT": "Workstation Edition",
+      "VARIANT_ID": "workstation"
+    },
+    "python": "3.14.8"
+  }
+}

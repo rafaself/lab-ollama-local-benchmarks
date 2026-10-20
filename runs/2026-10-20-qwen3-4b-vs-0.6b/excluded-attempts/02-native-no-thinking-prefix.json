@@ -1,0 +1,2000 @@
+{
+  "started_at": "2026-10-20T16:17:12.419398-03:00",
+  "options": {
+    "num_ctx": 4096,
+    "num_predict": 256,
+    "temperature": 0,
+    "seed": 42,
+    "num_batch": 512
+  },
+  "think": false,
+  "system": "Follow the user's instructions. Use only the supplied documents for factual document questions.",
+  "tasks": [
+    {
+      "id": "lookup",
+      "documents": "[P1] Unopened standard items can be returned within 21 days of delivery. The handling fee is 12 USD.",
+      "question": "What is the return deadline in days? Return only JSON with keys \"days\" (integer) and \"source\" (passage ID).",
+      "expected": {
+        "days": 21,
+        "source": "P1"
+      }
+    },
+    {
+      "id": "exception",
+      "documents": "[P1] Standard items are returnable within 30 days if unused.\n[P2] Clearance items are final sale and cannot be returned, even if unused.\n[P3] Defective products have a separate repair program.",
+      "question": "An unused, non-defective clearance item was delivered 10 days ago. Is it returnable? Return only JSON with keys \"eligible\" (boolean) and \"source\" (the decisive passage ID).",
+      "expected": {
+        "eligible": false,
+        "source": "P2"
+      }
+    },
+    {
+      "id": "dated_override",
+      "documents": "[P1] January policy: Standard workspaces allow 24 members; Pro workspaces allow 64 members.\n[P2] February policy: Pro trials have a limit of 8 members.\n[P3] March policy: The paid Pro limit is reduced to 32 members, replacing the January paid Pro limit. Trial limits are unchanged.",
+      "question": "Under the latest policy, what is the member limit for a paid Pro workspace that is not on a trial? Return only JSON with keys \"limit\" (integer) and \"source\" (decisive passage ID).",
+      "expected": {
+        "limit": 32,
+        "source": "P3"
+      }
+    },
+    {
+      "id": "multiple_conditions",
+      "documents": "[P1] A pilot requires an EU region and enabled backups.\n[P2] Workspace roster: Aster: EU, backups enabled, 120 active users; Birch: US, backups enabled, 150 active users; Cedar: EU, backups disabled, 200 active users; Dune: EU, backups enabled, 60 active users.\n[P3] The pilot also requires at least 100 active users.",
+      "question": "Which workspaces meet every pilot requirement? Return only JSON with one key \"workspaces\", an alphabetically sorted array of names.",
+      "expected": {
+        "workspaces": [
+          "Aster"
+        ]
+      }
+    },
+    {
+      "id": "calculation",
+      "documents": "[P1] The monthly base price is 120 USD and includes 120 requests.\n[P2] Each additional request costs 0.08 USD.\n[P3] Annual-contract customers receive a 25% discount on the additional-request charges only. The base price is not discounted. No taxes or other charges apply.",
+      "question": "An annual-contract customer uses 170 requests in one month. What is the total monthly bill? Return only JSON with one numeric key \"total_usd\".",
+      "expected": {
+        "total_usd": 123
+      }
+    },
+    {
+      "id": "abstention",
+      "documents": "[P1] The Basic plan costs 15 USD per month and includes email support.\n[P2] The Pro plan costs 40 USD per month and includes phone support.\n[P3] Both plans allow data export as CSV.",
+      "question": "How many hours is the guaranteed Pro phone-support response time? If the documents do not specify it, use null and no sources. Return only JSON with keys \"hours\" and \"sources\" (array of passage IDs).",
+      "expected": {
+        "hours": null,
+        "sources": []
+      }
+    }
+  ],
+  "prompt_rendering": "raw Qwen ChatML with system and user turns, /no_think appended to the user message, and assistant prefix <think>\\n\\n</think>\\n\\n. The installed tags have different templates/thinking metadata; this prefix standardizes non-thinking behavior.",
+  "method": "Sequential models; fresh model load then warmup; three short and three long 256-token capped requests; six one-shot synthetic RAG checks; greedy decoding; no concurrent inference; GPU sampled every 0.4 seconds. First load has OS caches in their existing state, not a controlled disk-cold load. Repeated prompt prefixes can use Ollama's normal cache.",
+  "version": {
+    "version": "0.40.6"
+  },
+  "installed_models": {
+    "models": [
+      {
+        "name": "qwen3:0.6b",
+        "model": "qwen3:0.6b",
+        "modified_at": "2026-10-20T16:13:55.881954944-03:00",
+        "size": 522653767,
+        "digest": "7df6b6e09427a769808717c0a93cadc4ae99ed4eb8bf5ca557c90846becea435",
+        "details": {
+          "parent_model": "",
+          "format": "gguf",
+          "family": "qwen3",
+          "families": [
+            "qwen3"
+          ],
+          "parameter_size": "751.63M",
+          "quantization_level": "Q4_K_M",
+          "context_length": 40960,
+          "embedding_length": 1024,
+          "runner": "ggml"
+        },
+        "capabilities": [
+          "completion",
+          "tools",
+          "thinking"
+        ]
+      },
+      {
+        "name": "qwen3:4b",
+        "model": "qwen3:4b",
+        "modified_at": "2026-10-20T16:04:37.158345983-03:00",
+        "size": 2497293931,
+        "digest": "359d7dd4bcdab3d86b87d73ac27966f4dbb9f5efdfcc75d34a8764a09474fae7",
+        "details": {
+          "parent_model": "",
+          "format": "gguf",
+          "family": "qwen3",
+          "families": [
+            "qwen3"
+          ],
+          "parameter_size": "4.0B",
+          "quantization_level": "Q4_K_M",
+          "context_length": 262144,
+          "embedding_length": 2560,
+          "runner": "ggml"
+        },
+        "capabilities": [
+          "completion",
+          "tools",
+          "thinking"
+        ]
+      }
+    ]
+  },
+  "baseline_gpu": {
+    "monotonic_s": 30910.492031759,
+    "used_mib": 13.0,
+    "free_mib": 5793.0,
+    "utilization_pct": 6.0,
+    "temperature_c": 60.0
+  },
+  "baseline_memory": {
+    "MemTotal_kib": 15566716,
+    "MemAvailable_kib": 6832248,
+    "SwapTotal_kib": 8388604,
+    "SwapFree_kib": 3842856
+  },
+  "models": [
+    {
+      "model": "qwen3:4b",
+      "show": {
+        "thinking": {
+          "values": [
+            true
+          ],
+          "default": true
+        },
+        "license": "                                 Apache License\n                           Version 2.0, January 2004\n                        http://www.apache.org/licenses/\n\n   TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION\n\n   1. Definitions.\n\n      \"License\" shall mean the terms and conditions for use, reproduction,\n      and distribution as defined by Sections 1 through 9 of this document.\n\n      \"Licensor\" shall mean the copyright owner or entity authorized by\n      the copyright owner that is granting the License.\n\n      \"Legal Entity\" shall mean the union of the acting entity and all\n      other entities that control, are controlled by, or are under common\n      control with that entity. For the purposes of this definition,\n      \"control\" means (i) the power, direct or indirect, to cause the\n      direction or management of such entity, whether by contract or\n      otherwise, or (ii) ownership of fifty percent (50%) or more of the\n      outstanding shares, or (iii) beneficial ownership of such entity.\n\n      \"You\" (or \"Your\") shall mean an individual or Legal Entity\n      exercising permissions granted by this License.\n\n      \"Source\" form shall mean the preferred form for making modifications,\n      including but not limited to software source code, documentation\n      source, and configuration files.\n\n      \"Object\" form shall mean any form resulting from mechanical\n      transformation or translation of a Source form, including but\n      not limited to compiled object code, generated documentation,\n      and conversions to other media types.\n\n      \"Work\" shall mean the work of authorship, whether in Source or\n      Object form, made available under the License, as indicated by a\n      copyright notice that is included in or attached to the work\n      (an example is provided in the Appendix below).\n\n      \"Derivative Works\" shall mean any work, whether in Source or Object\n      form, that is based on (or derived from) the Work and for which the\n      editorial revisions, annotations, elaborations, or other modifications\n      represent, as a whole, an original work of authorship. For the purposes\n      of this License, Derivative Works shall not include works that remain\n      separable from, or merely link (or bind by name) to the interfaces of,\n      the Work and Derivative Works thereof.\n\n      \"Contribution\" shall mean any work of authorship, including\n      the original version of the Work and any modifications or additions\n      to that Work or Derivative Works thereof, that is intentionally\n      submitted to Licensor for inclusion in the Work by the copyright owner\n      or by an individual or Legal Entity authorized to submit on behalf of\n      the copyright owner. For the purposes of this definition, \"submitted\"\n      means any form of electronic, verbal, or written communication sent\n      to the Licensor or its representatives, including but not limited to\n      communication on electronic mailing lists, source code control systems,\n      and issue tracking systems that are managed by, or on behalf of, the\n      Licensor for the purpose of discussing and improving the Work, but\n      excluding communication that is conspicuously marked or otherwise\n      designated in writing by the copyright owner as \"Not a Contribution.\"\n\n      \"Contributor\" shall mean Licensor and any individual or Legal Entity\n      on behalf of whom a Contribution has been received by Licensor and\n      subsequently incorporated within the Work.\n\n   2. Grant of Copyright License. Subject to the terms and conditions of\n      this License, each Contributor hereby grants to You a perpetual,\n      worldwide, non-exclusive, no-charge, royalty-free, irrevocable\n      copyright license to reproduce, prepare Derivative Works of,\n      publicly display, publicly perform, sublicense, and distribute the\n      Work and such Derivative Works in Source or Object form.\n\n   3. Grant of Patent License. Subject to the terms and conditions of\n      this License, each Contributor hereby grants to You a perpetual,\n      worldwide, non-exclusive, no-charge, royalty-free, irrevocable\n      (except as stated in this section) patent license to make, have made,\n      use, offer to sell, sell, import, and otherwise transfer the Work,\n      where such license applies only to those patent claims licensable\n      by such Contributor that are necessarily infringed by their\n      Contribution(s) alone or by combination of their Contribution(s)\n      with the Work to which such Contribution(s) was submitted. If You\n      institute patent litigation against any entity (including a\n      cross-claim or counterclaim in a lawsuit) alleging that the Work\n      or a Contribution incorporated within the Work constitutes direct\n      or contributory patent infringement, then any patent licenses\n      granted to You under this License for that Work shall terminate\n      as of the date such litigation is filed.\n\n   4. Redistribution. You may reproduce and distribute copies of the\n      Work or Derivative Works thereof in any medium, with or without\n      modifications, and in Source or Object form, provided that You\n      meet the following conditions:\n\n      (a) You must give any other recipients of the Work or\n          Derivative Works a copy of this License; and\n\n      (b) You must cause any modified files to carry prominent notices\n          stating that You changed the files; and\n\n      (c) You must retain, in the Source form of any Derivative Works\n          that You distribute, all copyright, patent, trademark, and\n          attribution notices from the Source form of the Work,\n          excluding those notices that do not pertain to any part of\n          the Derivative Works; and\n\n      (d) If the Work includes a \"NOTICE\" text file as part of its\n          distribution, then any Derivative Works that You distribute must\n          include a readable copy of the attribution notices contained\n          within such NOTICE file, excluding those notices that do not\n          pertain to any part of the Derivative Works, in at least one\n          of the following places: within a NOTICE text file distributed\n          as part of the Derivative Works; within the Source form or\n          documentation, if provided along with the Derivative Works; or,\n          within a display generated by the Derivative Works, if and\n          wherever such third-party notices normally appear. The contents\n          of the NOTICE file are for informational purposes only and\n          do not modify the License. You may add Your own attribution\n          notices within Derivative Works that You distribute, alongside\n          or as an addendum to the NOTICE text from the Work, provided\n          that such additional attribution notices cannot be construed\n          as modifying the License.\n\n      You may add Your own copyright statement to Your modifications and\n      may provide additional or different license terms and conditions\n      for use, reproduction, or distribution of Your modifications, or\n      for any such Derivative Works as a whole, provided Your use,\n      reproduction, and distribution of the Work otherwise complies with\n      the conditions stated in this License.\n\n   5. Submission of Contributions. Unless You explicitly state otherwise,\n      any Contribution intentionally submitted for inclusion in the Work\n      by You to the Licensor shall be under the terms and conditions of\n      this License, without any additional terms or conditions.\n      Notwithstanding the above, nothing herein shall supersede or modify\n      the terms of any separate license agreement you may have executed\n      with Licensor regarding such Contributions.\n\n   6. Trademarks. This License does not grant permission to use the trade\n      names, trademarks, service marks, or product names of the Licensor,\n      except as required for reasonable and customary use in describing the\n      origin of the Work and reproducing the content of the NOTICE file.\n\n   7. Disclaimer of Warranty. Unless required by applicable law or\n      agreed to in writing, Licensor provides the Work (and each\n      Contributor provides its Contributions) on an \"AS IS\" BASIS,\n      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or\n      implied, including, without limitation, any warranties or conditions\n      of TITLE, NON-INFRINGEMENT, MERCHANTABILITY, or FITNESS FOR A\n      PARTICULAR PURPOSE. You are solely responsible for determining the\n      appropriateness of using or redistributing the Work and assume any\n      risks associated with Your exercise of permissions under this License.\n\n   8. Limitation of Liability. In no event and under no legal theory,\n      whether in tort (including negligence), contract, or otherwise,\n      unless required by applicable law (such as deliberate and grossly\n      negligent acts) or agreed to in writing, shall any Contributor be\n      liable to You for damages, including any direct, indirect, special,\n      incidental, or consequential damages of any character arising as a\n      result of this License or out of the use or inability to use the\n      Work (including but not limited to damages for loss of goodwill,\n      work stoppage, computer failure or malfunction, or any and all\n      other commercial damages or losses), even if such Contributor\n      has been advised of the possibility of such damages.\n\n   9. Accepting Warranty or Additional Liability. While redistributing\n      the Work or Derivative Works thereof, You may choose to offer,\n      and charge a fee for, acceptance of support, warranty, indemnity,\n      or other liability obligations and/or rights consistent with this\n      License. However, in accepting such obligations, You may act only\n      on Your own behalf and on Your sole responsibility, not on behalf\n      of any other Contributor, and only if You agree to indemnify,\n      defend, and hold each Contributor harmless for any liability\n      incurred by, or claims asserted against, such Contributor by reason\n      of your accepting any such warranty or additional liability.\n\n   END OF TERMS AND CONDITIONS\n\n   APPENDIX: How to apply the Apache License to your work.\n\n      To apply the Apache License to your work, attach the following\n      boilerplate notice, with the fields enclosed by brackets \"[]\"\n      replaced with your own identifying information. (Don't include\n      the brackets!)  The text should be enclosed in the appropriate\n      comment syntax for the file format. We also recommend that a\n      file or class name and description of purpose be included on the\n      same \"printed page\" as the copyright notice for easier\n      identification within third-party archives.\n   Copyright 2024 Alibaba Cloud\n   Licensed under the Apache License, Version 2.0 (the \"License\");\n   you may not use this file except in compliance with the License.\n   You may obtain a copy of the License at\n       http://www.apache.org/licenses/LICENSE-2.0\n   Unless required by applicable law or agreed to in writing, software\n   distributed under the License is distributed on an \"AS IS\" BASIS,\n   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n   See the License for the specific language governing permissions and\n   limitations under the License.",
+        "modelfile": "# Modelfile generated by \"ollama show\"\n# To build a new Modelfile based on this, replace FROM with:\n# FROM qwen3:4b\n\nFROM /usr/share/ollama/.ollama/models/blobs/sha256-3e4cb14174460404e7a233e531675303b2fbf7749c02f91864fe311ab6344e4f\nTEMPLATE \"\"\"{{- $lastUserIdx := -1 -}}\n{{- range $idx, $msg := .Messages -}}\n{{- if eq $msg.Role \"user\" }}{{ $lastUserIdx = $idx }}{{ end -}}\n{{- end }}\n{{- if or .System .Tools }}<|im_start|>system\n{{ if .System }}{{ .System }}\n\n{{ end }}\n{{- if .Tools }}# Tools\n\nYou may call one or more functions to assist with the user query.\n\nYou are provided with function signatures within <tools></tools> XML tags:\n<tools>\n{{- range .Tools }}\n{\"type\": \"function\", \"function\": {{ .Function }}}\n{{- end }}\n</tools>\n\nFor each function call, return a json object with function name and arguments within <tool_call></tool_call> XML tags:\n<tool_call>\n{\"name\": <function-name>, \"arguments\": <args-json-object>}\n</tool_call>\n{{- end -}}\n<|im_end|>\n{{ end }}\n{{- range $i, $_ := .Messages }}\n{{- $last := eq (len (slice $.Messages $i)) 1 -}}\n{{- if eq .Role \"user\" }}<|im_start|>user\n{{ .Content }}<|im_end|>\n{{ else if eq .Role \"assistant\" }}<|im_start|>assistant\n{{ if (and $.IsThinkSet (and .Thinking (or $last (gt $i $lastUserIdx)))) -}}\n<think>{{ .Thinking }}</think>\n{{ end -}}\n{{ if .Content }}{{ .Content }}{{ end }}\n{{- if .ToolCalls }}\n{{- range .ToolCalls }}\n<tool_call>\n{\"name\": \"{{ .Function.Name }}\", \"arguments\": {{ .Function.Arguments }}}\n</tool_call>\n{{- end }}\n{{- end }}{{ if not $last }}<|im_end|>\n{{ end }}\n{{- else if eq .Role \"tool\" }}<|im_start|>user\n<tool_response>\n{{ .Content }}\n</tool_response><|im_end|>\n{{ end }}\n{{- if and (ne .Role \"assistant\") $last }}<|im_start|>assistant\n<think>\n{{ end }}\n{{- end }}\"\"\"\nPARAMETER top_p 0.95\nPARAMETER repeat_penalty 1\nPARAMETER stop <|im_start|>\nPARAMETER stop <|im_end|>\nPARAMETER temperature 0.6\nPARAMETER top_k 20\nLICENSE \"\"\"                                 Apache License\n                           Version 2.0, January 2004\n                        http://www.apache.org/licenses/\n\n   TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION\n\n   1. Definitions.\n\n      \"License\" shall mean the terms and conditions for use, reproduction,\n      and distribution as defined by Sections 1 through 9 of this document.\n\n      \"Licensor\" shall mean the copyright owner or entity authorized by\n      the copyright owner that is granting the License.\n\n      \"Legal Entity\" shall mean the union of the acting entity and all\n      other entities that control, are controlled by, or are under common\n      control with that entity. For the purposes of this definition,\n      \"control\" means (i) the power, direct or indirect, to cause the\n      direction or management of such entity, whether by contract or\n      otherwise, or (ii) ownership of fifty percent (50%) or more of the\n      outstanding shares, or (iii) beneficial ownership of such entity.\n\n      \"You\" (or \"Your\") shall mean an individual or Legal Entity\n      exercising permissions granted by this License.\n\n      \"Source\" form shall mean the preferred form for making modifications,\n      including but not limited to software source code, documentation\n      source, and configuration files.\n\n      \"Object\" form shall mean any form resulting from mechanical\n      transformation or translation of a Source form, including but\n      not limited to compiled object code, generated documentation,\n      and conversions to other media types.\n\n      \"Work\" shall mean the work of authorship, whether in Source or\n      Object form, made available under the License, as indicated by a\n      copyright notice that is included in or attached to the work\n      (an example is provided in the Appendix below).\n\n      \"Derivative Works\" shall mean any work, whether in Source or Object\n      form, that is based on (or derived from) the Work and for which the\n      editorial revisions, annotations, elaborations, or other modifications\n      represent, as a whole, an original work of authorship. For the purposes\n      of this License, Derivative Works shall not include works that remain\n      separable from, or merely link (or bind by name) to the interfaces of,\n      the Work and Derivative Works thereof.\n\n      \"Contribution\" shall mean any work of authorship, including\n      the original version of the Work and any modifications or additions\n      to that Work or Derivative Works thereof, that is intentionally\n      submitted to Licensor for inclusion in the Work by the copyright owner\n      or by an individual or Legal Entity authorized to submit on behalf of\n      the copyright owner. For the purposes of this definition, \"submitted\"\n      means any form of electronic, verbal, or written communication sent\n      to the Licensor or its representatives, including but not limited to\n      communication on electronic mailing lists, source code control systems,\n      and issue tracking systems that are managed by, or on behalf of, the\n      Licensor for the purpose of discussing and improving the Work, but\n      excluding communication that is conspicuously marked or otherwise\n      designated in writing by the copyright owner as \"Not a Contribution.\"\n\n      \"Contributor\" shall mean Licensor and any individual or Legal Entity\n      on behalf of whom a Contribution has been received by Licensor and\n      subsequently incorporated within the Work.\n\n   2. Grant of Copyright License. Subject to the terms and conditions of\n      this License, each Contributor hereby grants to You a perpetual,\n      worldwide, non-exclusive, no-charge, royalty-free, irrevocable\n      copyright license to reproduce, prepare Derivative Works of,\n      publicly display, publicly perform, sublicense, and distribute the\n      Work and such Derivative Works in Source or Object form.\n\n   3. Grant of Patent License. Subject to the terms and conditions of\n      this License, each Contributor hereby grants to You a perpetual,\n      worldwide, non-exclusive, no-charge, royalty-free, irrevocable\n      (except as stated in this section) patent license to make, have made,\n      use, offer to sell, sell, import, and otherwise transfer the Work,\n      where such license applies only to those patent claims licensable\n      by such Contributor that are necessarily infringed by their\n      Contribution(s) alone or by combination of their Contribution(s)\n      with the Work to which such Contribution(s) was submitted. If You\n      institute patent litigation against any entity (including a\n      cross-claim or counterclaim in a lawsuit) alleging that the Work\n      or a Contribution incorporated within the Work constitutes direct\n      or contributory patent infringement, then any patent licenses\n      granted to You under this License for that Work shall terminate\n      as of the date such litigation is filed.\n\n   4. Redistribution. You may reproduce and distribute copies of the\n      Work or Derivative Works thereof in any medium, with or without\n      modifications, and in Source or Object form, provided that You\n      meet the following conditions:\n\n      (a) You must give any other recipients of the Work or\n          Derivative Works a copy of this License; and\n\n      (b) You must cause any modified files to carry prominent notices\n          stating that You changed the files; and\n\n      (c) You must retain, in the Source form of any Derivative Works\n          that You distribute, all copyright, patent, trademark, and\n          attribution notices from the Source form of the Work,\n          excluding those notices that do not pertain to any part of\n          the Derivative Works; and\n\n      (d) If the Work includes a \"NOTICE\" text file as part of its\n          distribution, then any Derivative Works that You distribute must\n          include a readable copy of the attribution notices contained\n          within such NOTICE file, excluding those notices that do not\n          pertain to any part of the Derivative Works, in at least one\n          of the following places: within a NOTICE text file distributed\n          as part of the Derivative Works; within the Source form or\n          documentation, if provided along with the Derivative Works; or,\n          within a display generated by the Derivative Works, if and\n          wherever such third-party notices normally appear. The contents\n          of the NOTICE file are for informational purposes only and\n          do not modify the License. You may add Your own attribution\n          notices within Derivative Works that You distribute, alongside\n          or as an addendum to the NOTICE text from the Work, provided\n          that such additional attribution notices cannot be construed\n          as modifying the License.\n\n      You may add Your own copyright statement to Your modifications and\n      may provide additional or different license terms and conditions\n      for use, reproduction, or distribution of Your modifications, or\n      for any such Derivative Works as a whole, provided Your use,\n      reproduction, and distribution of the Work otherwise complies with\n      the conditions stated in this License.\n\n   5. Submission of Contributions. Unless You explicitly state otherwise,\n      any Contribution intentionally submitted for inclusion in the Work\n      by You to the Licensor shall be under the terms and conditions of\n      this License, without any additional terms or conditions.\n      Notwithstanding the above, nothing herein shall supersede or modify\n      the terms of any separate license agreement you may have executed\n      with Licensor regarding such Contributions.\n\n   6. Trademarks. This License does not grant permission to use the trade\n      names, trademarks, service marks, or product names of the Licensor,\n      except as required for reasonable and customary use in describing the\n      origin of the Work and reproducing the content of the NOTICE file.\n\n   7. Disclaimer of Warranty. Unless required by applicable law or\n      agreed to in writing, Licensor provides the Work (and each\n      Contributor provides its Contributions) on an \"AS IS\" BASIS,\n      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or\n      implied, including, without limitation, any warranties or conditions\n      of TITLE, NON-INFRINGEMENT, MERCHANTABILITY, or FITNESS FOR A\n      PARTICULAR PURPOSE. You are solely responsible for determining the\n      appropriateness of using or redistributing the Work and assume any\n      risks associated with Your exercise of permissions under this License.\n\n   8. Limitation of Liability. In no event and under no legal theory,\n      whether in tort (including negligence), contract, or otherwise,\n      unless required by applicable law (such as deliberate and grossly\n      negligent acts) or agreed to in writing, shall any Contributor be\n      liable to You for damages, including any direct, indirect, special,\n      incidental, or consequential damages of any character arising as a\n      result of this License or out of the use or inability to use the\n      Work (including but not limited to damages for loss of goodwill,\n      work stoppage, computer failure or malfunction, or any and all\n      other commercial damages or losses), even if such Contributor\n      has been advised of the possibility of such damages.\n\n   9. Accepting Warranty or Additional Liability. While redistributing\n      the Work or Derivative Works thereof, You may choose to offer,\n      and charge a fee for, acceptance of support, warranty, indemnity,\n      or other liability obligations and/or rights consistent with this\n      License. However, in accepting such obligations, You may act only\n      on Your own behalf and on Your sole responsibility, not on behalf\n      of any other Contributor, and only if You agree to indemnify,\n      defend, and hold each Contributor harmless for any liability\n      incurred by, or claims asserted against, such Contributor by reason\n      of your accepting any such warranty or additional liability.\n\n   END OF TERMS AND CONDITIONS\n\n   APPENDIX: How to apply the Apache License to your work.\n\n      To apply the Apache License to your work, attach the following\n      boilerplate notice, with the fields enclosed by brackets \"[]\"\n      replaced with your own identifying information. (Don't include\n      the brackets!)  The text should be enclosed in the appropriate\n      comment syntax for the file format. We also recommend that a\n      file or class name and description of purpose be included on the\n      same \"printed page\" as the copyright notice for easier\n      identification within third-party archives.\n   Copyright 2024 Alibaba Cloud\n   Licensed under the Apache License, Version 2.0 (the \"License\");\n   you may not use this file except in compliance with the License.\n   You may obtain a copy of the License at\n       http://www.apache.org/licenses/LICENSE-2.0\n   Unless required by applicable law or agreed to in writing, software\n   distributed under the License is distributed on an \"AS IS\" BASIS,\n   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n   See the License for the specific language governing permissions and\n   limitations under the License.\"\"\"\n",
+        "parameters": "repeat_penalty                 1\nstop                           \"<|im_start|>\"\nstop                           \"<|im_end|>\"\ntemperature                    0.6\ntop_k                          20\ntop_p                          0.95",
+        "template": "{{- $lastUserIdx := -1 -}}\n{{- range $idx, $msg := .Messages -}}\n{{- if eq $msg.Role \"user\" }}{{ $lastUserIdx = $idx }}{{ end -}}\n{{- end }}\n{{- if or .System .Tools }}<|im_start|>system\n{{ if .System }}{{ .System }}\n\n{{ end }}\n{{- if .Tools }}# Tools\n\nYou may call one or more functions to assist with the user query.\n\nYou are provided with function signatures within <tools></tools> XML tags:\n<tools>\n{{- range .Tools }}\n{\"type\": \"function\", \"function\": {{ .Function }}}\n{{- end }}\n</tools>\n\nFor each function call, return a json object with function name and arguments within <tool_call></tool_call> XML tags:\n<tool_call>\n{\"name\": <function-name>, \"arguments\": <args-json-object>}\n</tool_call>\n{{- end -}}\n<|im_end|>\n{{ end }}\n{{- range $i, $_ := .Messages }}\n{{- $last := eq (len (slice $.Messages $i)) 1 -}}\n{{- if eq .Role \"user\" }}<|im_start|>user\n{{ .Content }}<|im_end|>\n{{ else if eq .Role \"assistant\" }}<|im_start|>assistant\n{{ if (and $.IsThinkSet (and .Thinking (or $last (gt $i $lastUserIdx)))) -}}\n<think>{{ .Thinking }}</think>\n{{ end -}}\n{{ if .Content }}{{ .Content }}{{ end }}\n{{- if .ToolCalls }}\n{{- range .ToolCalls }}\n<tool_call>\n{\"name\": \"{{ .Function.Name }}\", \"arguments\": {{ .Function.Arguments }}}\n</tool_call>\n{{- end }}\n{{- end }}{{ if not $last }}<|im_end|>\n{{ end }}\n{{- else if eq .Role \"tool\" }}<|im_start|>user\n<tool_response>\n{{ .Content }}\n</tool_response><|im_end|>\n{{ end }}\n{{- if and (ne .Role \"assistant\") $last }}<|im_start|>assistant\n<think>\n{{ end }}\n{{- end }}",
+        "details": {
+          "parent_model": "",
+          "format": "gguf",
+          "family": "qwen3",
+          "families": [
+            "qwen3"
+          ],
+          "parameter_size": "4.0B",
+          "quantization_level": "Q4_K_M"
+        },
+        "model_info": {
+          "general.architecture": "qwen3",
+          "general.basename": "Qwen3",
+          "general.file_type": 15,
+          "general.finetune": "Thinking",
+          "general.license": "apache-2.0",
+          "general.license.link": "https://huggingface.co/Qwen/Qwen3-4B-Thinking-2507/blob/main/LICENSE",
+          "general.parameter_count": 4022468096,
+          "general.quantization_version": 2,
+          "general.size_label": "4B",
+          "general.tags": [
+            "text-generation"
+          ],
+          "general.type": "model",
+          "general.version": "2507",
+          "qwen3.attention.head_count": 32,
+          "qwen3.attention.head_count_kv": 8,
+          "qwen3.attention.key_length": 128,
+          "qwen3.attention.layer_norm_rms_epsilon": 1e-06,
+          "qwen3.attention.value_length": 128,
+          "qwen3.block_count": 36,
+          "qwen3.context_length": 262144,
+          "qwen3.embedding_length": 2560,
+          "qwen3.feed_forward_length": 9728,
+          "qwen3.rope.freq_base": 5000000,
+          "tokenizer.ggml.add_bos_token": false,
+          "tokenizer.ggml.bos_token_id": 151643,
+          "tokenizer.ggml.eos_token_id": 151645,
+          "tokenizer.ggml.merges": [],
+          "tokenizer.ggml.model": "gpt2",
+          "tokenizer.ggml.padding_token_id": 151643,
+          "tokenizer.ggml.pre": "qwen2",
+          "tokenizer.ggml.token_type": [],
+          "tokenizer.ggml.tokens": []
+        },
+        "capabilities": [
+          "completion",
+          "tools",
+          "thinking"
+        ],
+        "modified_at": "2026-10-20T16:04:37.158345983-03:00"
+      },
+      "runs": [
+        {
+          "kind": "short",
+          "repetition": 1,
+          "prompt": "Benchmark request 1. Write 1000 numbered, distinct, one-sentence tips for organizing a personal document library. Include tips about filenames, backups, tags, folders, and search. Do not add an introduction or conclusion. Continue until all 1000 tips are written.",
+          "metrics": {
+            "model": "qwen3:4b",
+            "created_at": "2026-10-20T19:17:21.125109407Z",
+            "done": true,
+            "done_reason": "length",
+            "total_duration": 2788588851,
+            "load_duration": 664467,
+            "prompt_eval_count": 96,
+            "prompt_eval_cached_count": 24,
+            "prompt_eval_duration": 32100000,
+            "eval_count": 256,
+            "eval_duration": 2745627000,
+            "response": "Hmm, the user wants me to write 1000 numbered, distinct, one-sentence tips for organizing a personal document library. They specifically want tips about filenames, backups, tags, folders, and search. No introduction or conclusion allowed - just straight to 1000 numbered tips.\n\nThis is quite a challenge since I need to generate exactly 1000 unique, one-sentence tips without repeating any. The user seems to be someone who's serious about digital organization - maybe a tech-savvy person, a student, or a professional dealing with document chaos. They're probably frustrated with messy digital files and want practical, actionable advice.\n\nI should focus on making each tip distinct and useful. For filenames, I can cover naming conventions, avoiding special characters, using dates, etc. For backups, I'll include cloud storage, external drives, versioning. Tags should be about metadata and categorization. Folders need hierarchy and naming rules. Search tips will cover keywords, filters, and indexing.\n\nThe key is to ensure every tip is truly unique - no duplicates in meaning or phrasing. I'll start generating systematically: first 100 on filenames, next 100 on backups, then 100 on tags, ",
+            "thinking": "",
+            "wall_s": 2.7890721100011433,
+            "ttft_s": 0.04361646300094435,
+            "generation_tokens_s": 93.23917633385744
+          }
+        },
+        {
+          "kind": "long",
+          "repetition": 1,
+          "prompt": "Benchmark request 1. Use only the following workspace records.\n[P01] Record W001: region=EU; plan=Pro; backups=enabled; active_users=41; owner=team-01. This record is an independent workspace snapshot.\n[P02] Record W002: region=EU; plan=Basic; backups=enabled; active_users=42; owner=team-02. This record is an independent workspace snapshot.\n[P03] Record W003: region=US; plan=Pro; backups=enabled; active_users=43; owner=team-03. This record is an independent workspace snapshot.\n[P04] Record W004: region=EU; plan=Basic; backups=disabled; active_users=44; owner=team-04. This record is an independent workspace snapshot.\n[P05] Record W005: region=EU; plan=Pro; backups=enabled; active_users=45; owner=team-05. This record is an independent workspace snapshot.\n[P06] Record W006: region=US; plan=Basic; backups=enabled; active_users=46; owner=team-06. This record is an independent workspace snapshot.\n[P07] Record W007: region=EU; plan=Pro; backups=enabled; active_users=47; owner=team-07. This record is an independent workspace snapshot.\n[P08] Record W008: region=EU; plan=Basic; backups=disabled; active_users=48; owner=team-08. This record is an independent workspace snapshot.\n[P09] Record W009: region=US; plan=Pro; backups=enabled; active_users=49; owner=team-09. This record is an independent workspace snapshot.\n[P10] Record W010: region=EU; plan=Basic; backups=enabled; active_users=50; owner=team-10. This record is an independent workspace snapshot.\n[P11] Record W011: region=EU; plan=Pro; backups=enabled; active_users=51; owner=team-11. This record is an independent workspace snapshot.\n[P12] Record W012: region=US; plan=Basic; backups=disabled; active_users=52; owner=team-12. This record is an independent workspace snapshot.\n[P13] Record W013: region=EU; plan=Pro; backups=enabled; active_users=53; owner=team-13. This record is an independent workspace snapshot.\n[P14] Record W014: region=EU; plan=Basic; backups=enabled; active_users=54; owner=team-14. This record is an independent workspace snapshot.\n[P15] Record W015: region=US; plan=Pro; backups=enabled; active_users=55; owner=team-15. This record is an independent workspace snapshot.\n[P16] Record W016: region=EU; plan=Basic; backups=disabled; active_users=56; owner=team-16. This record is an independent workspace snapshot.\n[P17] Record W017: region=EU; plan=Pro; backups=enabled; active_users=57; owner=team-17. This record is an independent workspace snapshot.\n[P18] Record W018: region=US; plan=Basic; backups=enabled; active_users=58; owner=team-18. This record is an independent workspace snapshot.\n[P19] Record W019: region=EU; plan=Pro; backups=enabled; active_users=59; owner=team-19. This record is an independent workspace snapshot.\n[P20] Record W020: region=EU; plan=Basic; backups=disabled; active_users=60; owner=team-20. This record is an independent workspace snapshot.\n[P21] Record W021: region=US; plan=Pro; backups=enabled; active_users=61; owner=team-21. This record is an independent workspace snapshot.\n[P22] Record W022: region=EU; plan=Basic; backups=enabled; active_users=62; owner=team-22. This record is an independent workspace snapshot.\n[P23] Record W023: region=EU; plan=Pro; backups=enabled; active_users=63; owner=team-23. This record is an independent workspace snapshot.\n[P24] Record W024: region=US; plan=Basic; backups=disabled; active_users=64; owner=team-24. This record is an independent workspace snapshot.\n[P25] Record W025: region=EU; plan=Pro; backups=enabled; active_users=65; owner=team-25. This record is an independent workspace snapshot.\n[P26] Record W026: region=EU; plan=Basic; backups=enabled; active_users=66; owner=team-26. This record is an independent workspace snapshot.\n[P27] Record W027: region=US; plan=Pro; backups=enabled; active_users=67; owner=team-27. This record is an independent workspace snapshot.\n[P28] Record W028: region=EU; plan=Basic; backups=disabled; active_users=68; owner=team-28. This record is an independent workspace snapshot.\n[P29] Record W029: region=EU; plan=Pro; backups=enabled; active_users=69; owner=team-29. This record is an independent workspace snapshot.\n[P30] Record W030: region=US; plan=Basic; backups=enabled; active_users=70; owner=team-30. This record is an independent workspace snapshot.\n[P31] Record W031: region=EU; plan=Pro; backups=enabled; active_users=71; owner=team-31. This record is an independent workspace snapshot.\n[P32] Record W032: region=EU; plan=Basic; backups=disabled; active_users=72; owner=team-32. This record is an independent workspace snapshot.\n[P33] Record W033: region=US; plan=Pro; backups=enabled; active_users=73; owner=team-33. This record is an independent workspace snapshot.\n[P34] Record W034: region=EU; plan=Basic; backups=enabled; active_users=74; owner=team-34. This record is an independent workspace snapshot.\n[P35] Record W035: region=EU; plan=Pro; backups=enabled; active_users=75; owner=team-35. This record is an independent workspace snapshot.\n[P36] Record W036: region=US; plan=Basic; backups=disabled; active_users=76; owner=team-36. This record is an independent workspace snapshot.\n[P37] Record W037: region=EU; plan=Pro; backups=enabled; active_users=77; owner=team-37. This record is an independent workspace snapshot.\n[P38] Record W038: region=EU; plan=Basic; backups=enabled; active_users=78; owner=team-38. This record is an independent workspace snapshot.\n[P39] Record W039: region=US; plan=Pro; backups=enabled; active_users=79; owner=team-39. This record is an independent workspace snapshot.\n[P40] Record W040: region=EU; plan=Basic; backups=disabled; active_users=80; owner=team-40. This record is an independent workspace snapshot.\n[P41] Record W041: region=EU; plan=Pro; backups=enabled; active_users=81; owner=team-41. This record is an independent workspace snapshot.\n[P42] Record W042: region=US; plan=Basic; backups=enabled; active_users=82; owner=team-42. This record is an independent workspace snapshot.\n[P43] Record W043: region=EU; plan=Pro; backups=enabled; active_users=83; owner=team-43. This record is an independent workspace snapshot.\n[P44] Record W044: region=EU; plan=Basic; backups=disabled; active_users=84; owner=team-44. This record is an independent workspace snapshot.\n[P45] Record W045: region=US; plan=Pro; backups=enabled; active_users=85; owner=team-45. This record is an independent workspace snapshot.\n[P46] Record W046: region=EU; plan=Basic; backups=enabled; active_users=86; owner=team-46. This record is an independent workspace snapshot.\n[P47] Record W047: region=EU; plan=Pro; backups=enabled; active_users=87; owner=team-47. This record is an independent workspace snapshot.\n[P48] Record W048: region=US; plan=Basic; backups=disabled; active_users=88; owner=team-48. This record is an independent workspace snapshot.\n[P49] Record W049: region=EU; plan=Pro; backups=enabled; active_users=89; owner=team-49. This record is an independent workspace snapshot.\n[P50] Record W050: region=EU; plan=Basic; backups=enabled; active_users=90; owner=team-50. This record is an independent workspace snapshot.\n[P51] Record W051: region=US; plan=Pro; backups=enabled; active_users=91; owner=team-51. This record is an independent workspace snapshot.\n[P52] Record W052: region=EU; plan=Basic; backups=disabled; active_users=92; owner=team-52. This record is an independent workspace snapshot.\n[P53] Record W053: region=EU; plan=Pro; backups=enabled; active_users=93; owner=team-53. This record is an independent workspace snapshot.\n[P54] Record W054: region=US; plan=Basic; backups=enabled; active_users=94; owner=team-54. This record is an independent workspace snapshot.\n[P55] Record W055: region=EU; plan=Pro; backups=enabled; active_users=95; owner=team-55. This record is an independent workspace snapshot.\n[P56] Record W056: region=EU; plan=Basic; backups=disabled; active_users=96; owner=team-56. This record is an independent workspace snapshot.\n[P57] Record W057: region=US; plan=Pro; backups=enabled; active_users=97; owner=team-57. This record is an independent workspace snapshot.\n[P58] Record W058: region=EU; plan=Basic; backups=enabled; active_users=98; owner=team-58. This record is an independent workspace snapshot.\n[P59] Record W059: region=EU; plan=Pro; backups=enabled; active_users=99; owner=team-59. This record is an independent workspace snapshot.\n[P60] Record W060: region=US; plan=Basic; backups=disabled; active_users=100; owner=team-60. This record is an independent workspace snapshot.\nList every EU workspace as a numbered list. For each, report its ID, plan, backup status, active user count, owner, and source passage. Include every matching workspace; do not summarize.",
+          "metrics": {
+            "model": "qwen3:4b",
+            "created_at": "2026-10-20T19:17:25.051555216Z",
+            "done": true,
+            "done_reason": "length",
+            "total_duration": 3924878291,
+            "load_duration": 686658,
+            "prompt_eval_count": 2669,
+            "prompt_eval_cached_count": 29,
+            "prompt_eval_duration": 842700000,
+            "eval_count": 256,
+            "eval_duration": 3040314000,
+            "response": "I need to go through all the workspace records and list every EU workspace with the specified information. Let me identify all the records that have region=EU.\n\nFrom the provided records:\n\n[P01] Record W001: region=EU; plan=Pro; backups=enabled; active_users=41; owner=team-01\n[P02] Record W002: region=EU; plan=Basic; backups=enabled; active_users=42; owner=team-02\n[P03] Record W003: region=US; plan=Pro; backups=enabled; active_users=43; owner=team-03 (not EU)\n[P04] Record W004: region=EU; plan=Basic; backups=disabled; active_users=44; owner=team-04\n[P05] Record W005: region=EU; plan=Pro; backups=enabled; active_users=45; owner=team-05\n[P06] Record W006: region=US; plan=Basic; backups=enabled; active_users=46; owner=team-06 (not EU)\n[P07]",
+            "thinking": "",
+            "wall_s": 3.9253743940025743,
+            "ttft_s": 0.8851988470014476,
+            "generation_tokens_s": 84.201829153173
+          }
+        },
+        {
+          "kind": "short",
+          "repetition": 2,
+          "prompt": "Benchmark request 2. Write 1000 numbered, distinct, one-sentence tips for organizing a personal document library. Include tips about filenames, backups, tags, folders, and search. Do not add an introduction or conclusion. Continue until all 1000 tips are written.",
+          "metrics": {
+            "model": "qwen3:4b",
+            "created_at": "2026-10-20T19:17:28.051486107Z",
+            "done": true,
+            "done_reason": "length",
+            "total_duration": 2998723213,
+            "load_duration": 725651,
+            "prompt_eval_count": 96,
+            "prompt_eval_cached_count": 27,
+            "prompt_eval_duration": 30799000,
+            "eval_count": 256,
+            "eval_duration": 2739260000,
+            "response": "Hmm, the user wants me to write 1000 numbered, distinct, one-sentence tips for organizing a personal document library. They specifically want tips about filenames, backups, tags, folders, and search. No introduction or conclusion allowed - just straight to 1000 numbered tips.\n\nThis is quite a challenge since I need to generate exactly 1000 unique, one-sentence tips without repeating any. The user seems to be someone who's serious about digital organization - maybe a tech-savvy person, a student, or a professional dealing with document chaos. They're probably frustrated with messy digital files and want practical, actionable advice.\n\nI should focus on making each tip distinct and useful. For filenames, I can cover naming conventions, avoiding special characters, using dates, etc. For backups, I'll include cloud storage, external drives, versioning. Tags should be about metadata and categorization. Folders need hierarchy and naming rules. Search tips will cover keywords, filters, and indexing.\n\nThe key is to ensure every tip is truly unique - no duplicates in meaning or phrasing. I'll start generating systematically: first 100 on filenames, next 100 on backups, then 100 on tags, ",
+            "thinking": "",
+            "wall_s": 2.9993863069976214,
+            "ttft_s": 0.259955434998119,
+            "generation_tokens_s": 93.45589684805385
+          }
+        },
+        {
+          "kind": "long",
+          "repetition": 2,
+          "prompt": "Benchmark request 2. Use only the following workspace records.\n[P01] Record W001: region=EU; plan=Pro; backups=enabled; active_users=41; owner=team-01. This record is an independent workspace snapshot.\n[P02] Record W002: region=EU; plan=Basic; backups=enabled; active_users=42; owner=team-02. This record is an independent workspace snapshot.\n[P03] Record W003: region=US; plan=Pro; backups=enabled; active_users=43; owner=team-03. This record is an independent workspace snapshot.\n[P04] Record W004: region=EU; plan=Basic; backups=disabled; active_users=44; owner=team-04. This record is an independent workspace snapshot.\n[P05] Record W005: region=EU; plan=Pro; backups=enabled; active_users=45; owner=team-05. This record is an independent workspace snapshot.\n[P06] Record W006: region=US; plan=Basic; backups=enabled; active_users=46; owner=team-06. This record is an independent workspace snapshot.\n[P07] Record W007: region=EU; plan=Pro; backups=enabled; active_users=47; owner=team-07. This record is an independent workspace snapshot.\n[P08] Record W008: region=EU; plan=Basic; backups=disabled; active_users=48; owner=team-08. This record is an independent workspace snapshot.\n[P09] Record W009: region=US; plan=Pro; backups=enabled; active_users=49; owner=team-09. This record is an independent workspace snapshot.\n[P10] Record W010: region=EU; plan=Basic; backups=enabled; active_users=50; owner=team-10. This record is an independent workspace snapshot.\n[P11] Record W011: region=EU; plan=Pro; backups=enabled; active_users=51; owner=team-11. This record is an independent workspace snapshot.\n[P12] Record W012: region=US; plan=Basic; backups=disabled; active_users=52; owner=team-12. This record is an independent workspace snapshot.\n[P13] Record W013: region=EU; plan=Pro; backups=enabled; active_users=53; owner=team-13. This record is an independent workspace snapshot.\n[P14] Record W014: region=EU; plan=Basic; backups=enabled; active_users=54; owner=team-14. This record is an independent workspace snapshot.\n[P15] Record W015: region=US; plan=Pro; backups=enabled; active_users=55; owner=team-15. This record is an independent workspace snapshot.\n[P16] Record W016: region=EU; plan=Basic; backups=disabled; active_users=56; owner=team-16. This record is an independent workspace snapshot.\n[P17] Record W017: region=EU; plan=Pro; backups=enabled; active_users=57; owner=team-17. This record is an independent workspace snapshot.\n[P18] Record W018: region=US; plan=Basic; backups=enabled; active_users=58; owner=team-18. This record is an independent workspace snapshot.\n[P19] Record W019: region=EU; plan=Pro; backups=enabled; active_users=59; owner=team-19. This record is an independent workspace snapshot.\n[P20] Record W020: region=EU; plan=Basic; backups=disabled; active_users=60; owner=team-20. This record is an independent workspace snapshot.\n[P21] Record W021: region=US; plan=Pro; backups=enabled; active_users=61; owner=team-21. This record is an independent workspace snapshot.\n[P22] Record W022: region=EU; plan=Basic; backups=enabled; active_users=62; owner=team-22. This record is an independent workspace snapshot.\n[P23] Record W023: region=EU; plan=Pro; backups=enabled; active_users=63; owner=team-23. This record is an independent workspace snapshot.\n[P24] Record W024: region=US; plan=Basic; backups=disabled; active_users=64; owner=team-24. This record is an independent workspace snapshot.\n[P25] Record W025: region=EU; plan=Pro; backups=enabled; active_users=65; owner=team-25. This record is an independent workspace snapshot.\n[P26] Record W026: region=EU; plan=Basic; backups=enabled; active_users=66; owner=team-26. This record is an independent workspace snapshot.\n[P27] Record W027: region=US; plan=Pro; backups=enabled; active_users=67; owner=team-27. This record is an independent workspace snapshot.\n[P28] Record W028: region=EU; plan=Basic; backups=disabled; active_users=68; owner=team-28. This record is an independent workspace snapshot.\n[P29] Record W029: region=EU; plan=Pro; backups=enabled; active_users=69; owner=team-29. This record is an independent workspace snapshot.\n[P30] Record W030: region=US; plan=Basic; backups=enabled; active_users=70; owner=team-30. This record is an independent workspace snapshot.\n[P31] Record W031: region=EU; plan=Pro; backups=enabled; active_users=71; owner=team-31. This record is an independent workspace snapshot.\n[P32] Record W032: region=EU; plan=Basic; backups=disabled; active_users=72; owner=team-32. This record is an independent workspace snapshot.\n[P33] Record W033: region=US; plan=Pro; backups=enabled; active_users=73; owner=team-33. This record is an independent workspace snapshot.\n[P34] Record W034: region=EU; plan=Basic; backups=enabled; active_users=74; owner=team-34. This record is an independent workspace snapshot.\n[P35] Record W035: region=EU; plan=Pro; backups=enabled; active_users=75; owner=team-35. This record is an independent workspace snapshot.\n[P36] Record W036: region=US; plan=Basic; backups=disabled; active_users=76; owner=team-36. This record is an independent workspace snapshot.\n[P37] Record W037: region=EU; plan=Pro; backups=enabled; active_users=77; owner=team-37. This record is an independent workspace snapshot.\n[P38] Record W038: region=EU; plan=Basic; backups=enabled; active_users=78; owner=team-38. This record is an independent workspace snapshot.\n[P39] Record W039: region=US; plan=Pro; backups=enabled; active_users=79; owner=team-39. This record is an independent workspace snapshot.\n[P40] Record W040: region=EU; plan=Basic; backups=disabled; active_users=80; owner=team-40. This record is an independent workspace snapshot.\n[P41] Record W041: region=EU; plan=Pro; backups=enabled; active_users=81; owner=team-41. This record is an independent workspace snapshot.\n[P42] Record W042: region=US; plan=Basic; backups=enabled; active_users=82; owner=team-42. This record is an independent workspace snapshot.\n[P43] Record W043: region=EU; plan=Pro; backups=enabled; active_users=83; owner=team-43. This record is an independent workspace snapshot.\n[P44] Record W044: region=EU; plan=Basic; backups=disabled; active_users=84; owner=team-44. This record is an independent workspace snapshot.\n[P45] Record W045: region=US; plan=Pro; backups=enabled; active_users=85; owner=team-45. This record is an independent workspace snapshot.\n[P46] Record W046: region=EU; plan=Basic; backups=enabled; active_users=86; owner=team-46. This record is an independent workspace snapshot.\n[P47] Record W047: region=EU; plan=Pro; backups=enabled; active_users=87; owner=team-47. This record is an independent workspace snapshot.\n[P48] Record W048: region=US; plan=Basic; backups=disabled; active_users=88; owner=team-48. This record is an independent workspace snapshot.\n[P49] Record W049: region=EU; plan=Pro; backups=enabled; active_users=89; owner=team-49. This record is an independent workspace snapshot.\n[P50] Record W050: region=EU; plan=Basic; backups=enabled; active_users=90; owner=team-50. This record is an independent workspace snapshot.\n[P51] Record W051: region=US; plan=Pro; backups=enabled; active_users=91; owner=team-51. This record is an independent workspace snapshot.\n[P52] Record W052: region=EU; plan=Basic; backups=disabled; active_users=92; owner=team-52. This record is an independent workspace snapshot.\n[P53] Record W053: region=EU; plan=Pro; backups=enabled; active_users=93; owner=team-53. This record is an independent workspace snapshot.\n[P54] Record W054: region=US; plan=Basic; backups=enabled; active_users=94; owner=team-54. This record is an independent workspace snapshot.\n[P55] Record W055: region=EU; plan=Pro; backups=enabled; active_users=95; owner=team-55. This record is an independent workspace snapshot.\n[P56] Record W056: region=EU; plan=Basic; backups=disabled; active_users=96; owner=team-56. This record is an independent workspace snapshot.\n[P57] Record W057: region=US; plan=Pro; backups=enabled; active_users=97; owner=team-57. This record is an independent workspace snapshot.\n[P58] Record W058: region=EU; plan=Basic; backups=enabled; active_users=98; owner=team-58. This record is an independent workspace snapshot.\n[P59] Record W059: region=EU; plan=Pro; backups=enabled; active_users=99; owner=team-59. This record is an independent workspace snapshot.\n[P60] Record W060: region=US; plan=Basic; backups=disabled; active_users=100; owner=team-60. This record is an independent workspace snapshot.\nList every EU workspace as a numbered list. For each, report its ID, plan, backup status, active user count, owner, and source passage. Include every matching workspace; do not summarize.",
+          "metrics": {
+            "model": "qwen3:4b",
+            "created_at": "2026-10-20T19:17:31.970878986Z",
+            "done": true,
+            "done_reason": "length",
+            "total_duration": 3917780949,
+            "load_duration": 912609,
+            "prompt_eval_count": 2669,
+            "prompt_eval_cached_count": 29,
+            "prompt_eval_duration": 835926000,
+            "eval_count": 256,
+            "eval_duration": 3042724000,
+            "response": "I need to go through all the workspace records and list every EU workspace with the specified information. Let me identify all the records that have region=EU.\n\nFrom the provided records:\n\n[P01] Record W001: region=EU; plan=Pro; backups=enabled; active_users=41; owner=team-01\n[P02] Record W002: region=EU; plan=Basic; backups=enabled; active_users=42; owner=team-02\n[P03] Record W003: region=US; plan=Pro; backups=enabled; active_users=43; owner=team-03 (not EU)\n[P04] Record W004: region=EU; plan=Basic; backups=disabled; active_users=44; owner=team-04\n[P05] Record W005: region=EU; plan=Pro; backups=enabled; active_users=45; owner=team-05\n[P06] Record W006: region=US; plan=Basic; backups=enabled; active_users=46; owner=team-06 (not EU)\n[P07]",
+            "thinking": "",
+            "wall_s": 3.9182221699993534,
+            "ttft_s": 0.8755716160012526,
+            "generation_tokens_s": 84.13513680504705
+          }
+        },
+        {
+          "kind": "short",
+          "repetition": 3,
+          "prompt": "Benchmark request 3. Write 1000 numbered, distinct, one-sentence tips for organizing a personal document library. Include tips about filenames, backups, tags, folders, and search. Do not add an introduction or conclusion. Continue until all 1000 tips are written.",
+          "metrics": {
+            "model": "qwen3:4b",
+            "created_at": "2026-10-20T19:17:34.986382235Z",
+            "done": true,
+            "done_reason": "length",
+            "total_duration": 3014020158,
+            "load_duration": 954286,
+            "prompt_eval_count": 96,
+            "prompt_eval_cached_count": 27,
+            "prompt_eval_duration": 30790000,
+            "eval_count": 256,
+            "eval_duration": 2744110000,
+            "response": "Hmm, the user wants me to write 1000 numbered, distinct, one-sentence tips for organizing a personal document library. They specifically want tips about filenames, backups, tags, folders, and search. No introduction or conclusion allowed - just straight to the numbered list.\n\nThis is quite a challenge since I need to generate exactly 1000 unique tips without repeating any. The user seems to be someone who's serious about digital organization - maybe a tech-savvy person, a student, or a professional dealing with lots of documents. They're probably frustrated with messy digital systems and want practical, actionable advice.\n\nI should focus on making each tip distinct and useful. For filenames, I can cover naming conventions, avoiding special characters, using dates, etc. For backups, I'll include cloud storage, external drives, versioning. Tags should be about metadata and categorization. Folders need hierarchy and naming rules. Search tips will cover indexing and query techniques.\n\nThe key is to ensure every tip is a single sentence and numbered from 1 to 1000. I'll start drafting mentally: tip 1 could be about using descriptive filenames, tip 2 about avoiding spaces in filenames... I need to be systematic to hit exactly 10",
+            "thinking": "",
+            "wall_s": 3.014555924997694,
+            "ttft_s": 0.27033987599861575,
+            "generation_tokens_s": 93.29072085302703
+          }
+        },
+        {
+          "kind": "long",
+          "repetition": 3,
+          "prompt": "Benchmark request 3. Use only the following workspace records.\n[P01] Record W001: region=EU; plan=Pro; backups=enabled; active_users=41; owner=team-01. This record is an independent workspace snapshot.\n[P02] Record W002: region=EU; plan=Basic; backups=enabled; active_users=42; owner=team-02. This record is an independent workspace snapshot.\n[P03] Record W003: region=US; plan=Pro; backups=enabled; active_users=43; owner=team-03. This record is an independent workspace snapshot.\n[P04] Record W004: region=EU; plan=Basic; backups=disabled; active_users=44; owner=team-04. This record is an independent workspace snapshot.\n[P05] Record W005: region=EU; plan=Pro; backups=enabled; active_users=45; owner=team-05. This record is an independent workspace snapshot.\n[P06] Record W006: region=US; plan=Basic; backups=enabled; active_users=46; owner=team-06. This record is an independent workspace snapshot.\n[P07] Record W007: region=EU; plan=Pro; backups=enabled; active_users=47; owner=team-07. This record is an independent workspace snapshot.\n[P08] Record W008: region=EU; plan=Basic; backups=disabled; active_users=48; owner=team-08. This record is an independent workspace snapshot.\n[P09] Record W009: region=US; plan=Pro; backups=enabled; active_users=49; owner=team-09. This record is an independent workspace snapshot.\n[P10] Record W010: region=EU; plan=Basic; backups=enabled; active_users=50; owner=team-10. This record is an independent workspace snapshot.\n[P11] Record W011: region=EU; plan=Pro; backups=enabled; active_users=51; owner=team-11. This record is an independent workspace snapshot.\n[P12] Record W012: region=US; plan=Basic; backups=disabled; active_users=52; owner=team-12. This record is an independent workspace snapshot.\n[P13] Record W013: region=EU; plan=Pro; backups=enabled; active_users=53; owner=team-13. This record is an independent workspace snapshot.\n[P14] Record W014: region=EU; plan=Basic; backups=enabled; active_users=54; owner=team-14. This record is an independent workspace snapshot.\n[P15] Record W015: region=US; plan=Pro; backups=enabled; active_users=55; owner=team-15. This record is an independent workspace snapshot.\n[P16] Record W016: region=EU; plan=Basic; backups=disabled; active_users=56; owner=team-16. This record is an independent workspace snapshot.\n[P17] Record W017: region=EU; plan=Pro; backups=enabled; active_users=57; owner=team-17. This record is an independent workspace snapshot.\n[P18] Record W018: region=US; plan=Basic; backups=enabled; active_users=58; owner=team-18. This record is an independent workspace snapshot.\n[P19] Record W019: region=EU; plan=Pro; backups=enabled; active_users=59; owner=team-19. This record is an independent workspace snapshot.\n[P20] Record W020: region=EU; plan=Basic; backups=disabled; active_users=60; owner=team-20. This record is an independent workspace snapshot.\n[P21] Record W021: region=US; plan=Pro; backups=enabled; active_users=61; owner=team-21. This record is an independent workspace snapshot.\n[P22] Record W022: region=EU; plan=Basic; backups=enabled; active_users=62; owner=team-22. This record is an independent workspace snapshot.\n[P23] Record W023: region=EU; plan=Pro; backups=enabled; active_users=63; owner=team-23. This record is an independent workspace snapshot.\n[P24] Record W024: region=US; plan=Basic; backups=disabled; active_users=64; owner=team-24. This record is an independent workspace snapshot.\n[P25] Record W025: region=EU; plan=Pro; backups=enabled; active_users=65; owner=team-25. This record is an independent workspace snapshot.\n[P26] Record W026: region=EU; plan=Basic; backups=enabled; active_users=66; owner=team-26. This record is an independent workspace snapshot.\n[P27] Record W027: region=US; plan=Pro; backups=enabled; active_users=67; owner=team-27. This record is an independent workspace snapshot.\n[P28] Record W028: region=EU; plan=Basic; backups=disabled; active_users=68; owner=team-28. This record is an independent workspace snapshot.\n[P29] Record W029: region=EU; plan=Pro; backups=enabled; active_users=69; owner=team-29. This record is an independent workspace snapshot.\n[P30] Record W030: region=US; plan=Basic; backups=enabled; active_users=70; owner=team-30. This record is an independent workspace snapshot.\n[P31] Record W031: region=EU; plan=Pro; backups=enabled; active_users=71; owner=team-31. This record is an independent workspace snapshot.\n[P32] Record W032: region=EU; plan=Basic; backups=disabled; active_users=72; owner=team-32. This record is an independent workspace snapshot.\n[P33] Record W033: region=US; plan=Pro; backups=enabled; active_users=73; owner=team-33. This record is an independent workspace snapshot.\n[P34] Record W034: region=EU; plan=Basic; backups=enabled; active_users=74; owner=team-34. This record is an independent workspace snapshot.\n[P35] Record W035: region=EU; plan=Pro; backups=enabled; active_users=75; owner=team-35. This record is an independent workspace snapshot.\n[P36] Record W036: region=US; plan=Basic; backups=disabled; active_users=76; owner=team-36. This record is an independent workspace snapshot.\n[P37] Record W037: region=EU; plan=Pro; backups=enabled; active_users=77; owner=team-37. This record is an independent workspace snapshot.\n[P38] Record W038: region=EU; plan=Basic; backups=enabled; active_users=78; owner=team-38. This record is an independent workspace snapshot.\n[P39] Record W039: region=US; plan=Pro; backups=enabled; active_users=79; owner=team-39. This record is an independent workspace snapshot.\n[P40] Record W040: region=EU; plan=Basic; backups=disabled; active_users=80; owner=team-40. This record is an independent workspace snapshot.\n[P41] Record W041: region=EU; plan=Pro; backups=enabled; active_users=81; owner=team-41. This record is an independent workspace snapshot.\n[P42] Record W042: region=US; plan=Basic; backups=enabled; active_users=82; owner=team-42. This record is an independent workspace snapshot.\n[P43] Record W043: region=EU; plan=Pro; backups=enabled; active_users=83; owner=team-43. This record is an independent workspace snapshot.\n[P44] Record W044: region=EU; plan=Basic; backups=disabled; active_users=84; owner=team-44. This record is an independent workspace snapshot.\n[P45] Record W045: region=US; plan=Pro; backups=enabled; active_users=85; owner=team-45. This record is an independent workspace snapshot.\n[P46] Record W046: region=EU; plan=Basic; backups=enabled; active_users=86; owner=team-46. This record is an independent workspace snapshot.\n[P47] Record W047: region=EU; plan=Pro; backups=enabled; active_users=87; owner=team-47. This record is an independent workspace snapshot.\n[P48] Record W048: region=US; plan=Basic; backups=disabled; active_users=88; owner=team-48. This record is an independent workspace snapshot.\n[P49] Record W049: region=EU; plan=Pro; backups=enabled; active_users=89; owner=team-49. This record is an independent workspace snapshot.\n[P50] Record W050: region=EU; plan=Basic; backups=enabled; active_users=90; owner=team-50. This record is an independent workspace snapshot.\n[P51] Record W051: region=US; plan=Pro; backups=enabled; active_users=91; owner=team-51. This record is an independent workspace snapshot.\n[P52] Record W052: region=EU; plan=Basic; backups=disabled; active_users=92; owner=team-52. This record is an independent workspace snapshot.\n[P53] Record W053: region=EU; plan=Pro; backups=enabled; active_users=93; owner=team-53. This record is an independent workspace snapshot.\n[P54] Record W054: region=US; plan=Basic; backups=enabled; active_users=94; owner=team-54. This record is an independent workspace snapshot.\n[P55] Record W055: region=EU; plan=Pro; backups=enabled; active_users=95; owner=team-55. This record is an independent workspace snapshot.\n[P56] Record W056: region=EU; plan=Basic; backups=disabled; active_users=96; owner=team-56. This record is an independent workspace snapshot.\n[P57] Record W057: region=US; plan=Pro; backups=enabled; active_users=97; owner=team-57. This record is an independent workspace snapshot.\n[P58] Record W058: region=EU; plan=Basic; backups=enabled; active_users=98; owner=team-58. This record is an independent workspace snapshot.\n[P59] Record W059: region=EU; plan=Pro; backups=enabled; active_users=99; owner=team-59. This record is an independent workspace snapshot.\n[P60] Record W060: region=US; plan=Basic; backups=disabled; active_users=100; owner=team-60. This record is an independent workspace snapshot.\nList every EU workspace as a numbered list. For each, report its ID, plan, backup status, active user count, owner, and source passage. Include every matching workspace; do not summarize.",
+          "metrics": {
+            "model": "qwen3:4b",
+            "created_at": "2026-10-20T19:17:38.917459155Z",
+            "done": true,
+            "done_reason": "length",
+            "total_duration": 3929499563,
+            "load_duration": 805840,
+            "prompt_eval_count": 2669,
+            "prompt_eval_cached_count": 29,
+            "prompt_eval_duration": 840016000,
+            "eval_count": 256,
+            "eval_duration": 3050203000,
+            "response": "I need to go through all the workspace records and list every EU workspace with the specified information. Let me identify all the records that have region=EU.\n\nFrom the provided records, I'll extract all the EU workspaces:\n\n1. [P01] Record W001: region=EU; plan=Pro; backups=enabled; active_users=41; owner=team-01\n2. [P02] Record W002: region=EU; plan=Basic; backups=enabled; active_users=42; owner=team-02\n3. [P05] Record W005: region=EU; plan=Pro; backups=enabled; active_users=45; owner=team-05\n4. [P07] Record W007: region=EU; plan=Pro; backups=enabled; active_users=47; owner=team-07\n5. [P10] Record W010: region=EU; plan=Basic; backups=enabled; active_users=50; owner=team-10\n6. [P11] Record W011: region=EU; plan=Pro;",
+            "thinking": "",
+            "wall_s": 3.9300277570000617,
+            "ttft_s": 0.8797767739997653,
+            "generation_tokens_s": 83.9288401460493
+          }
+        }
+      ],
+      "quality": [
+        {
+          "task": "lookup",
+          "prompt": "Documents:\n[P1] Unopened standard items can be returned within 21 days of delivery. The handling fee is 12 USD.\n\nQuestion:\nWhat is the return deadline in days? Return only JSON with keys \"days\" (integer) and \"source\" (passage ID).",
+          "expected": {
+            "days": 21,
+            "source": "P1"
+          },
+          "parsed": null,
+          "passed": false,
+          "metrics": {
+            "model": "qwen3:4b",
+            "created_at": "2026-10-20T19:17:41.938036229Z",
+            "done": true,
+            "done_reason": "length",
+            "total_duration": 3018885415,
+            "load_duration": 742162,
+            "prompt_eval_count": 95,
+            "prompt_eval_cached_count": 24,
+            "prompt_eval_duration": 31341000,
+            "eval_count": 256,
+            "eval_duration": 2747518000,
+            "response": "Okay, let's see. The user is asking about the return deadline in days based on the provided document. The question specifies to return only a JSON with keys \"days\" (integer) and \"source\" (passage ID).\n\nFirst, I need to check the documents given. The only document here is [P1]. Let me read it again: \"Unopened standard items can be returned within 21 days of delivery. The handling fee is 12 USD.\"\n\nSo the key part here is \"within 21 days of delivery\". That means the return deadline is 21 days. The source here is [P1], which is the passage ID they mentioned.\n\nWait, the user wants the answer in JSON with \"days\" as an integer and \"source\" as the passage ID. The passage ID in the documents is labeled [P1], so the source should be \"P1\".\n\nLet me make sure there's no other document. The user provided only [P1], so the source is definitely P1. The days are 21. So the JSON should be {\"days\": 21, \"source\": \"P1\"}.\n\nI don't think there's any ambiguity here. The document clearly states 21 days",
+            "thinking": "",
+            "wall_s": 3.019525335999788,
+            "ttft_s": 0.27168317699761246,
+            "generation_tokens_s": 93.17500376703629
+          }
+        },
+        {
+          "task": "exception",
+          "prompt": "Documents:\n[P1] Standard items are returnable within 30 days if unused.\n[P2] Clearance items are final sale and cannot be returned, even if unused.\n[P3] Defective products have a separate repair program.\n\nQuestion:\nAn unused, non-defective clearance item was delivered 10 days ago. Is it returnable? Return only JSON with keys \"eligible\" (boolean) and \"source\" (the decisive passage ID).",
+          "expected": {
+            "eligible": false,
+            "source": "P2"
+          },
+          "parsed": null,
+          "passed": false,
+          "metrics": {
+            "model": "qwen3:4b",
+            "created_at": "2026-10-20T19:17:44.763289502Z",
+            "done": true,
+            "done_reason": "length",
+            "total_duration": 2823141451,
+            "load_duration": 805449,
+            "prompt_eval_count": 127,
+            "prompt_eval_cached_count": 29,
+            "prompt_eval_duration": 38352000,
+            "eval_count": 256,
+            "eval_duration": 2749466000,
+            "response": "We are given three passages [P1], [P2], [P3] and a question.\n\nQuestion: An unused, non-defective clearance item was delivered 10 days ago. Is it returnable?\n\nWe need to return a JSON with keys \"eligible\" (boolean) and \"source\" (the decisive passage ID).\n\nLet's analyze the passages:\n\n[P1]: Standard items are returnable within 30 days if unused.\n[P2]: Clearance items are final sale and cannot be returned, even if unused.\n[P3]: Defective products have a separate repair program.\n\nThe item in question:\n- It is an unused clearance item (so it's a clearance item, meaning it's not standard)\n- It is non-defective (so we don't have to worry about [P3] because it's not defective)\n\nAccording to [P2]: Clearance items are final sale and cannot be returned, even if unused.\n\nTherefore, the clearance item (which is the type of this item) cannot be returned, regardless of being unused or not.\n\nThe item was delivered 1: 10 days ago. But note that [P2] says they cannot be returned even if unused. So the 10 days is irrelevant because clearance items are",
+            "thinking": "",
+            "wall_s": 2.823963322000054,
+            "ttft_s": 0.07404842400137568,
+            "generation_tokens_s": 93.10898916371397
+          }
+        },
+        {
+          "task": "dated_override",
+          "prompt": "Documents:\n[P1] January policy: Standard workspaces allow 24 members; Pro workspaces allow 64 members.\n[P2] February policy: Pro trials have a limit of 8 members.\n[P3] March policy: The paid Pro limit is reduced to 32 members, replacing the January paid Pro limit. Trial limits are unchanged.\n\nQuestion:\nUnder the latest policy, what is the member limit for a paid Pro workspace that is not on a trial? Return only JSON with keys \"limit\" (integer) and \"source\" (decisive passage ID).",
+          "expected": {
+            "limit": 32,
+            "source": "P3"
+          },
+          "parsed": null,
+          "passed": false,
+          "metrics": {
+            "model": "qwen3:4b",
+            "created_at": "2026-10-20T19:17:47.598131675Z",
+            "done": true,
+            "done_reason": "length",
+            "total_duration": 2832711306,
+            "load_duration": 997857,
+            "prompt_eval_count": 154,
+            "prompt_eval_cached_count": 29,
+            "prompt_eval_duration": 44347000,
+            "eval_count": 256,
+            "eval_duration": 2754337000,
+            "response": "We are given three policy documents (P1, P2, P3) for January, February, and March.\n\nThe question asks: \"Under the latest policy, what is the member limit for a paid Pro workspace that is not on a trial?\"\n\nWe need to find the latest policy. The documents are labeled by month:\n- P1: January policy\n- P2: February policy\n- P3: March policy\n\nSo the latest policy is March (P3).\n\nNow, let's look at P3: \"March policy: The paid Pro limit is reduced to 32 members, replacing the January paid Pro limit. Trial limits are unchanged.\"\n\nThis tells us that for a paid Pro workspace that is not on a trial, the member limit is 32.\n\nWe note that the question specifies \"paid Pro workspace that is not on a trial\". The policy in P3 says the paid Pro limit is 3 and the trial limits are unchanged (but we don't need that for the paid non-trial case).\n\nTherefore, the limit for a paid Pro workspace (not on trial) under the latest (March) policy is 32.\n\nWe return a JSON with keys \"limit\" (integer) and \"source\" (the passage ID,",
+            "thinking": "",
+            "wall_s": 2.833306384000025,
+            "ttft_s": 0.07876898100221297,
+            "generation_tokens_s": 92.94432743705654
+          }
+        },
+        {
+          "task": "multiple_conditions",
+          "prompt": "Documents:\n[P1] A pilot requires an EU region and enabled backups.\n[P2] Workspace roster: Aster: EU, backups enabled, 120 active users; Birch: US, backups enabled, 150 active users; Cedar: EU, backups disabled, 200 active users; Dune: EU, backups enabled, 60 active users.\n[P3] The pilot also requires at least 100 active users.\n\nQuestion:\nWhich workspaces meet every pilot requirement? Return only JSON with one key \"workspaces\", an alphabetically sorted array of names.",
+          "expected": {
+            "workspaces": [
+              "Aster"
+            ]
+          },
+          "parsed": null,
+          "passed": false,
+          "metrics": {
+            "model": "qwen3:4b",
+            "created_at": "2026-10-20T19:17:50.447966396Z",
+            "done": true,
+            "done_reason": "length",
+            "total_duration": 2847444683,
+            "load_duration": 1045627,
+            "prompt_eval_count": 157,
+            "prompt_eval_cached_count": 29,
+            "prompt_eval_duration": 44852000,
+            "eval_count": 256,
+            "eval_duration": 2763377000,
+            "response": "Okay, let's tackle this problem step by step. So, the question is asking which workspaces meet every pilot requirement based on the given documents. Let me first make sure I understand the requirements correctly.\n\nFrom the documents:\n\n- [P1] says a pilot requires an EU region and enabled backups.\n- [P3] states that the pilot also requires at least 1: Wait, no, the user wrote \"at least 100 active users.\" So P3 is \"at least 100 active users.\"\n\nThe workspaces are listed in [P2] with their details:\n\n- Aster: EU, backups enabled, 120 active users\n- Birch: US, backups enabled, 150 active users\n- Cedar: EU, backups disabled, 200 active users\n- Dune: EU, backups enabled, 60 active users\n\nSo the pilot has three requirements:\n1. EU region\n2. Backups enabled\n3. At least 100 active users\n\nWe need to check each workspace against all three requirements.\n\nLet's go through each workspace:\n\n1. **Aster**:\n   - Region: EU \u2705\n   - Backups: enabled \u2705\n   - Active",
+            "thinking": "",
+            "wall_s": 2.8479811920005886,
+            "ttft_s": 0.08448200699785957,
+            "generation_tokens_s": 92.64027311510517
+          }
+        },
+        {
+          "task": "calculation",
+          "prompt": "Documents:\n[P1] The monthly base price is 120 USD and includes 120 requests.\n[P2] Each additional request costs 0.08 USD.\n[P3] Annual-contract customers receive a 25% discount on the additional-request charges only. The base price is not discounted. No taxes or other charges apply.\n\nQuestion:\nAn annual-contract customer uses 170 requests in one month. What is the total monthly bill? Return only JSON with one numeric key \"total_usd\".",
+          "expected": {
+            "total_usd": 123
+          },
+          "parsed": null,
+          "passed": false,
+          "metrics": {
+            "model": "qwen3:4b",
+            "created_at": "2026-10-20T19:17:53.290831784Z",
+            "done": true,
+            "done_reason": "length",
+            "total_duration": 2840985449,
+            "load_duration": 683292,
+            "prompt_eval_count": 144,
+            "prompt_eval_cached_count": 29,
+            "prompt_eval_duration": 43304000,
+            "eval_count": 256,
+            "eval_duration": 2758207000,
+            "response": "Okay, let's see. I need to figure out the total monthly bill for an annual-contract customer who uses 170 requests in one month. Let me go through the documents step by step.\n\nFirst, looking at the documents:\n\n[P1] says the monthly base price is 120 USD and includes 120 requests. So normally, if you use up to 120 requests, you pay 120 USD. But if you go over that, you have to pay extra.\n\n[P2] states each additional request costs 0.08 USD. So any requests beyond the base 120 will be charged at 0.08 each.\n\n[P3] mentions that annual-contract customers get a 25% discount on the additional-request charges only. The base price isn't discounted. No taxes or other charges apply.\n\nThe customer uses 170 requests in a month. Let's break this down.\n\nFirst, the base price covers 120 requests. So the additional requests here are 170 - 120 = 50 requests.\n\nEach additional request is 0.08 USD, so without discount, that's 50 * 0.08",
+            "thinking": "",
+            "wall_s": 2.841654813997593,
+            "ttft_s": 0.083202543999505,
+            "generation_tokens_s": 92.81391860726914
+          }
+        },
+        {
+          "task": "abstention",
+          "prompt": "Documents:\n[P1] The Basic plan costs 15 USD per month and includes email support.\n[P2] The Pro plan costs 40 USD per month and includes phone support.\n[P3] Both plans allow data export as CSV.\n\nQuestion:\nHow many hours is the guaranteed Pro phone-support response time? If the documents do not specify it, use null and no sources. Return only JSON with keys \"hours\" and \"sources\" (array of passage IDs).",
+          "expected": {
+            "hours": null,
+            "sources": []
+          },
+          "parsed": null,
+          "passed": false,
+          "metrics": {
+            "model": "qwen3:4b",
+            "created_at": "2026-10-20T19:17:56.125112271Z",
+            "done": true,
+            "done_reason": "length",
+            "total_duration": 2832540307,
+            "load_duration": 691417,
+            "prompt_eval_count": 131,
+            "prompt_eval_cached_count": 30,
+            "prompt_eval_duration": 38866000,
+            "eval_count": 256,
+            "eval_duration": 2755677000,
+            "response": "Okay, let's tackle this problem. So, the user is asking about the guaranteed Pro phone-support response time in hours. They want to know if the documents specify it, and if not, return null with no sources.\n\nFirst, I need to check the provided documents. The documents are P1, P2, and P3.\n\nLooking at P1: It says the Basic plan costs 15 USD per month and includes email support. No mention of phone support or response times here.\n\nP2: The Pro plan costs 40 USD per and includes phone support. Hmm, it mentions phone support but doesn't specify the response time. So, the response time isn't stated here.\n\nP3: Both plans allow data export as CSV. That's about data export, not support response times.\n\nThe question is about the guaranteed Pro phone-support response time in hours. The documents don't mention anything about response time for phone support. P2 says Pro includes phone support, but there's no detail on how quickly they respond. The other documents don't have relevant info either.\n\nSo, since none of the passages specify the response time, the answer should be null with an empty sources array. Wait, the user says if the documents don't specify it, use",
+            "thinking": "",
+            "wall_s": 2.833067318999383,
+            "ttft_s": 0.07721909600149957,
+            "generation_tokens_s": 92.89913150198663
+          }
+        }
+      ],
+      "gpu_samples": [
+        {
+          "monotonic_s": 30910.520063842,
+          "used_mib": 13.0,
+          "free_mib": 5793.0,
+          "utilization_pct": 6.0,
+          "temperature_c": 60.0
+        },
+        {
+          "monotonic_s": 30910.951521474,
+          "used_mib": 130.0,
+          "free_mib": 5675.0,
+          "utilization_pct": 3.0,
+          "temperature_c": 61.0
+        },
+        {
+          "monotonic_s": 30911.403539,
+          "used_mib": 128.0,
+          "free_mib": 5678.0,
+          "utilization_pct": 1.0,
+          "temperature_c": 61.0
+        },
+        {
+          "monotonic_s": 30911.829173643,
+          "used_mib": 130.0,
+          "free_mib": 5675.0,
+          "utilization_pct": 0.0,
+          "temperature_c": 61.0
+        },
+        {
+          "monotonic_s": 30912.256597577,
+          "used_mib": 2506.0,
+          "free_mib": 3299.0,
+          "utilization_pct": 16.0,
+          "temperature_c": 61.0
+        },
+        {
+          "monotonic_s": 30912.685837862,
+          "used_mib": 2506.0,
+          "free_mib": 3299.0,
+          "utilization_pct": 4.0,
+          "temperature_c": 61.0
+        },
+        {
+          "monotonic_s": 30913.113166428,
+          "used_mib": 2506.0,
+          "free_mib": 3299.0,
+          "utilization_pct": 7.0,
+          "temperature_c": 61.0
+        },
+        {
+          "monotonic_s": 30913.545361133,
+          "used_mib": 2506.0,
+          "free_mib": 3299.0,
+          "utilization_pct": 16.0,
+          "temperature_c": 61.0
+        },
+        {
+          "monotonic_s": 30913.972618777,
+          "used_mib": 3164.0,
+          "free_mib": 2641.0,
+          "utilization_pct": 0.0,
+          "temperature_c": 61.0
+        },
+        {
+          "monotonic_s": 30914.39881735,
+          "used_mib": 3184.0,
+          "free_mib": 2621.0,
+          "utilization_pct": 54.0,
+          "temperature_c": 64.0
+        },
+        {
+          "monotonic_s": 30914.825865965,
+          "used_mib": 3184.0,
+          "free_mib": 2621.0,
+          "utilization_pct": 96.0,
+          "temperature_c": 67.0
+        },
+        {
+          "monotonic_s": 30915.259273898,
+          "used_mib": 3184.0,
+          "free_mib": 2621.0,
+          "utilization_pct": 96.0,
+          "temperature_c": 68.0
+        },
+        {
+          "monotonic_s": 30915.687170902,
+          "used_mib": 3184.0,
+          "free_mib": 2621.0,
+          "utilization_pct": 97.0,
+          "temperature_c": 68.0
+        },
+        {
+          "monotonic_s": 30916.114453814,
+          "used_mib": 3184.0,
+          "free_mib": 2621.0,
+          "utilization_pct": 97.0,
+          "temperature_c": 69.0
+        },
+        {
+          "monotonic_s": 30916.542042064,
+          "used_mib": 3184.0,
+          "free_mib": 2621.0,
+          "utilization_pct": 97.0,
+          "temperature_c": 69.0
+        },
+        {
+          "monotonic_s": 30916.971204343,
+          "used_mib": 3184.0,
+          "free_mib": 2621.0,
+          "utilization_pct": 97.0,
+          "temperature_c": 69.0
+        },
+        {
+          "monotonic_s": 30917.398723013,
+          "used_mib": 3184.0,
+          "free_mib": 2621.0,
+          "utilization_pct": 97.0,
+          "temperature_c": 69.0
+        },
+        {
+          "monotonic_s": 30917.826221105,
+          "used_mib": 3190.0,
+          "free_mib": 2615.0,
+          "utilization_pct": 80.0,
+          "temperature_c": 69.0
+        },
+        {
+          "monotonic_s": 30918.255473363,
+          "used_mib": 3190.0,
+          "free_mib": 2615.0,
+          "utilization_pct": 100.0,
+          "temperature_c": 70.0
+        },
+        {
+          "monotonic_s": 30918.68386607,
+          "used_mib": 3190.0,
+          "free_mib": 2615.0,
+          "utilization_pct": 97.0,
+          "temperature_c": 70.0
+        },
+        {
+          "monotonic_s": 30919.111398846,
+          "used_mib": 3190.0,
+          "free_mib": 2615.0,
+          "utilization_pct": 97.0,
+          "temperature_c": 71.0
+        },
+        {
+          "monotonic_s": 30919.539605287,
+          "used_mib": 3190.0,
+          "free_mib": 2615.0,
+          "utilization_pct": 97.0,
+          "temperature_c": 71.0
+        },
+        {
+          "monotonic_s": 30919.968845131,
+          "used_mib": 3190.0,
+          "free_mib": 2615.0,
+          "utilization_pct": 98.0,
+          "temperature_c": 71.0
+        },
+        {
+          "monotonic_s": 30920.397411612,
+          "used_mib": 3190.0,
+          "free_mib": 2615.0,
+          "utilization_pct": 95.0,
+          "temperature_c": 71.0
+        },
+        {
+          "monotonic_s": 30920.825228236,
+          "used_mib": 3190.0,
+          "free_mib": 2615.0,
+          "utilization_pct": 98.0,
+          "temperature_c": 72.0
+        },
+        {
+          "monotonic_s": 30921.253173961,
+          "used_mib": 3190.0,
+          "free_mib": 2615.0,
+          "utilization_pct": 97.0,
+          "temperature_c": 72.0
+        },
+        {
+          "monotonic_s": 30921.676725787,
+          "used_mib": 3190.0,
+          "free_mib": 2615.0,
+          "utilization_pct": 5.0,
+          "temperature_c": 68.0
+        },
+        {
+          "monotonic_s": 30922.104524308,
+          "used_mib": 3190.0,
+          "free_mib": 2615.0,
+          "utilization_pct": 97.0,
+          "temperature_c": 72.0
+        },
+        {
+          "monotonic_s": 30922.533584097,
+          "used_mib": 3190.0,
+          "free_mib": 2615.0,
+          "utilization_pct": 96.0,
+          "temperature_c": 72.0
+        },
+        {
+          "monotonic_s": 30922.962954615,
+          "used_mib": 3190.0,
+          "free_mib": 2615.0,
+          "utilization_pct": 97.0,
+          "temperature_c": 72.0
+        },
+        {
+          "monotonic_s": 30923.390555117,
+          "used_mib": 3190.0,
+          "free_mib": 2615.0,
+          "utilization_pct": 97.0,
+          "temperature_c": 73.0
+        },
+        {
+          "monotonic_s": 30923.818621136,
+          "used_mib": 3190.0,
+          "free_mib": 2615.0,
+          "utilization_pct": 97.0,
+          "temperature_c": 72.0
+        },
+        {
+          "monotonic_s": 30924.246193857,
+          "used_mib": 3190.0,
+          "free_mib": 2615.0,
+          "utilization_pct": 97.0,
+          "temperature_c": 73.0
+        },
+        {
+          "monotonic_s": 30924.67340777,
+          "used_mib": 3190.0,
+          "free_mib": 2615.0,
+          "utilization_pct": 60.0,
+          "temperature_c": 73.0
+        },
+        {
+          "monotonic_s": 30925.100023519,
+          "used_mib": 3190.0,
+          "free_mib": 2615.0,
+          "utilization_pct": 100.0,
+          "temperature_c": 74.0
+        },
+        {
+          "monotonic_s": 30925.527615756,
+          "used_mib": 3190.0,
+          "free_mib": 2615.0,
+          "utilization_pct": 95.0,
+          "temperature_c": 74.0
+        },
+        {
+          "monotonic_s": 30925.955519523,
+          "used_mib": 3190.0,
+          "free_mib": 2615.0,
+          "utilization_pct": 96.0,
+          "temperature_c": 74.0
+        },
+        {
+          "monotonic_s": 30926.382967562,
+          "used_mib": 3190.0,
+          "free_mib": 2615.0,
+          "utilization_pct": 97.0,
+          "temperature_c": 74.0
+        },
+        {
+          "monotonic_s": 30926.812527562,
+          "used_mib": 3190.0,
+          "free_mib": 2615.0,
+          "utilization_pct": 98.0,
+          "temperature_c": 74.0
+        },
+        {
+          "monotonic_s": 30927.240811267,
+          "used_mib": 3190.0,
+          "free_mib": 2615.0,
+          "utilization_pct": 95.0,
+          "temperature_c": 74.0
+        },
+        {
+          "monotonic_s": 30927.669464389,
+          "used_mib": 3190.0,
+          "free_mib": 2615.0,
+          "utilization_pct": 98.0,
+          "temperature_c": 74.0
+        },
+        {
+          "monotonic_s": 30928.096976396,
+          "used_mib": 3190.0,
+          "free_mib": 2615.0,
+          "utilization_pct": 98.0,
+          "temperature_c": 75.0
+        },
+        {
+          "monotonic_s": 30928.522592896,
+          "used_mib": 3190.0,
+          "free_mib": 2615.0,
+          "utilization_pct": 97.0,
+          "temperature_c": 75.0
+        },
+        {
+          "monotonic_s": 30928.950709539,
+          "used_mib": 3190.0,
+          "free_mib": 2615.0,
+          "utilization_pct": 97.0,
+          "temperature_c": 74.0
+        },
+        {
+          "monotonic_s": 30929.380384904,
+          "used_mib": 3190.0,
+          "free_mib": 2615.0,
+          "utilization_pct": 96.0,
+          "temperature_c": 75.0
+        },
+        {
+          "monotonic_s": 30929.809375905,
+          "used_mib": 3190.0,
+          "free_mib": 2615.0,
+          "utilization_pct": 97.0,
+          "temperature_c": 75.0
+        },
+        {
+          "monotonic_s": 30930.23853559,
+          "used_mib": 3190.0,
+          "free_mib": 2615.0,
+          "utilization_pct": 96.0,
+          "temperature_c": 76.0
+        },
+        {
+          "monotonic_s": 30930.673111778,
+          "used_mib": 3190.0,
+          "free_mib": 2615.0,
+          "utilization_pct": 97.0,
+          "temperature_c": 75.0
+        },
+        {
+          "monotonic_s": 30931.10180265,
+          "used_mib": 3190.0,
+          "free_mib": 2615.0,
+          "utilization_pct": 97.0,
+          "temperature_c": 76.0
+        },
+        {
+          "monotonic_s": 30931.530331981,
+          "used_mib": 3190.0,
+          "free_mib": 2615.0,
+          "utilization_pct": 97.0,
+          "temperature_c": 76.0
+        },
+        {
+          "monotonic_s": 30931.958956711,
+          "used_mib": 3190.0,
+          "free_mib": 2615.0,
+          "utilization_pct": 100.0,
+          "temperature_c": 77.0
+        },
+        {
+          "monotonic_s": 30932.387948673,
+          "used_mib": 3190.0,
+          "free_mib": 2615.0,
+          "utilization_pct": 100.0,
+          "temperature_c": 77.0
+        },
+        {
+          "monotonic_s": 30932.816625559,
+          "used_mib": 3190.0,
+          "free_mib": 2615.0,
+          "utilization_pct": 97.0,
+          "temperature_c": 76.0
+        },
+        {
+          "monotonic_s": 30933.24535295,
+          "used_mib": 3190.0,
+          "free_mib": 2615.0,
+          "utilization_pct": 97.0,
+          "temperature_c": 77.0
+        },
+        {
+          "monotonic_s": 30933.67352181,
+          "used_mib": 3190.0,
+          "free_mib": 2615.0,
+          "utilization_pct": 97.0,
+          "temperature_c": 77.0
+        },
+        {
+          "monotonic_s": 30934.102345179,
+          "used_mib": 3190.0,
+          "free_mib": 2615.0,
+          "utilization_pct": 97.0,
+          "temperature_c": 77.0
+        },
+        {
+          "monotonic_s": 30934.531236575,
+          "used_mib": 3190.0,
+          "free_mib": 2615.0,
+          "utilization_pct": 98.0,
+          "temperature_c": 77.0
+        },
+        {
+          "monotonic_s": 30934.960377675,
+          "used_mib": 3190.0,
+          "free_mib": 2615.0,
+          "utilization_pct": 98.0,
+          "temperature_c": 77.0
+        },
+        {
+          "monotonic_s": 30935.38983834,
+          "used_mib": 3190.0,
+          "free_mib": 2615.0,
+          "utilization_pct": 97.0,
+          "temperature_c": 77.0
+        },
+        {
+          "monotonic_s": 30935.824189119,
+          "used_mib": 3190.0,
+          "free_mib": 2615.0,
+          "utilization_pct": 89.0,
+          "temperature_c": 76.0
+        },
+        {
+          "monotonic_s": 30936.251784812,
+          "used_mib": 3190.0,
+          "free_mib": 2615.0,
+          "utilization_pct": 97.0,
+          "temperature_c": 78.0
+        },
+        {
+          "monotonic_s": 30936.681015039,
+          "used_mib": 3190.0,
+          "free_mib": 2615.0,
+          "utilization_pct": 97.0,
+          "temperature_c": 77.0
+        },
+        {
+          "monotonic_s": 30937.109386947,
+          "used_mib": 3190.0,
+          "free_mib": 2615.0,
+          "utilization_pct": 96.0,
+          "temperature_c": 78.0
+        },
+        {
+          "monotonic_s": 30937.537607995,
+          "used_mib": 3190.0,
+          "free_mib": 2615.0,
+          "utilization_pct": 96.0,
+          "temperature_c": 78.0
+        },
+        {
+          "monotonic_s": 30937.968665883,
+          "used_mib": 3190.0,
+          "free_mib": 2615.0,
+          "utilization_pct": 97.0,
+          "temperature_c": 78.0
+        },
+        {
+          "monotonic_s": 30938.396186938,
+          "used_mib": 3190.0,
+          "free_mib": 2615.0,
+          "utilization_pct": 97.0,
+          "temperature_c": 79.0
+        },
+        {
+          "monotonic_s": 30938.824418375,
+          "used_mib": 3192.0,
+          "free_mib": 2613.0,
+          "utilization_pct": 97.0,
+          "temperature_c": 79.0
+        },
+        {
+          "monotonic_s": 30939.252550146,
+          "used_mib": 3192.0,
+          "free_mib": 2613.0,
+          "utilization_pct": 97.0,
+          "temperature_c": 79.0
+        },
+        {
+          "monotonic_s": 30939.681750387,
+          "used_mib": 3192.0,
+          "free_mib": 2613.0,
+          "utilization_pct": 97.0,
+          "temperature_c": 79.0
+        },
+        {
+          "monotonic_s": 30940.108427961,
+          "used_mib": 3192.0,
+          "free_mib": 2613.0,
+          "utilization_pct": 97.0,
+          "temperature_c": 79.0
+        },
+        {
+          "monotonic_s": 30940.534957069,
+          "used_mib": 3192.0,
+          "free_mib": 2613.0,
+          "utilization_pct": 97.0,
+          "temperature_c": 79.0
+        },
+        {
+          "monotonic_s": 30940.961151665,
+          "used_mib": 3192.0,
+          "free_mib": 2613.0,
+          "utilization_pct": 96.0,
+          "temperature_c": 79.0
+        },
+        {
+          "monotonic_s": 30941.389526939,
+          "used_mib": 3192.0,
+          "free_mib": 2613.0,
+          "utilization_pct": 65.0,
+          "temperature_c": 79.0
+        },
+        {
+          "monotonic_s": 30941.817881435,
+          "used_mib": 3192.0,
+          "free_mib": 2613.0,
+          "utilization_pct": 97.0,
+          "temperature_c": 80.0
+        },
+        {
+          "monotonic_s": 30942.245452423,
+          "used_mib": 3192.0,
+          "free_mib": 2613.0,
+          "utilization_pct": 97.0,
+          "temperature_c": 79.0
+        },
+        {
+          "monotonic_s": 30942.675608984,
+          "used_mib": 3192.0,
+          "free_mib": 2613.0,
+          "utilization_pct": 97.0,
+          "temperature_c": 80.0
+        },
+        {
+          "monotonic_s": 30943.102837504,
+          "used_mib": 3192.0,
+          "free_mib": 2613.0,
+          "utilization_pct": 97.0,
+          "temperature_c": 80.0
+        },
+        {
+          "monotonic_s": 30943.530522333,
+          "used_mib": 3192.0,
+          "free_mib": 2613.0,
+          "utilization_pct": 97.0,
+          "temperature_c": 80.0
+        },
+        {
+          "monotonic_s": 30943.958349588,
+          "used_mib": 3192.0,
+          "free_mib": 2613.0,
+          "utilization_pct": 97.0,
+          "temperature_c": 80.0
+        },
+        {
+          "monotonic_s": 30944.387158961,
+          "used_mib": 3192.0,
+          "free_mib": 2613.0,
+          "utilization_pct": 97.0,
+          "temperature_c": 80.0
+        },
+        {
+          "monotonic_s": 30944.81526296,
+          "used_mib": 3192.0,
+          "free_mib": 2613.0,
+          "utilization_pct": 97.0,
+          "temperature_c": 80.0
+        },
+        {
+          "monotonic_s": 30945.244159325,
+          "used_mib": 3192.0,
+          "free_mib": 2613.0,
+          "utilization_pct": 97.0,
+          "temperature_c": 80.0
+        },
+        {
+          "monotonic_s": 30945.675187017,
+          "used_mib": 3192.0,
+          "free_mib": 2613.0,
+          "utilization_pct": 97.0,
+          "temperature_c": 81.0
+        },
+        {
+          "monotonic_s": 30946.103232498,
+          "used_mib": 3192.0,
+          "free_mib": 2613.0,
+          "utilization_pct": 97.0,
+          "temperature_c": 80.0
+        },
+        {
+          "monotonic_s": 30946.531416737,
+          "used_mib": 3192.0,
+          "free_mib": 2613.0,
+          "utilization_pct": 97.0,
+          "temperature_c": 81.0
+        },
+        {
+          "monotonic_s": 30946.956631108,
+          "used_mib": 3192.0,
+          "free_mib": 2613.0,
+          "utilization_pct": 97.0,
+          "temperature_c": 81.0
+        },
+        {
+          "monotonic_s": 30947.385571946,
+          "used_mib": 3192.0,
+          "free_mib": 2613.0,
+          "utilization_pct": 97.0,
+          "temperature_c": 81.0
+        },
+        {
+          "monotonic_s": 30947.813332726,
+          "used_mib": 3192.0,
+          "free_mib": 2613.0,
+          "utilization_pct": 97.0,
+          "temperature_c": 81.0
+        },
+        {
+          "monotonic_s": 30948.24142244,
+          "used_mib": 3192.0,
+          "free_mib": 2613.0,
+          "utilization_pct": 97.0,
+          "temperature_c": 81.0
+        },
+        {
+          "monotonic_s": 30948.670239176,
+          "used_mib": 3192.0,
+          "free_mib": 2613.0,
+          "utilization_pct": 97.0,
+          "temperature_c": 81.0
+        },
+        {
+          "monotonic_s": 30949.099473981,
+          "used_mib": 3192.0,
+          "free_mib": 2613.0,
+          "utilization_pct": 96.0,
+          "temperature_c": 81.0
+        },
+        {
+          "monotonic_s": 30949.527386043,
+          "used_mib": 3192.0,
+          "free_mib": 2613.0,
+          "utilization_pct": 97.0,
+          "temperature_c": 81.0
+        },
+        {
+          "monotonic_s": 30949.956815651,
+          "used_mib": 3192.0,
+          "free_mib": 2613.0,
+          "utilization_pct": 94.0,
+          "temperature_c": 81.0
+        },
+        {
+          "monotonic_s": 30950.385282406,
+          "used_mib": 3192.0,
+          "free_mib": 2613.0,
+          "utilization_pct": 97.0,
+          "temperature_c": 82.0
+        },
+        {
+          "monotonic_s": 30950.81529581,
+          "used_mib": 3192.0,
+          "free_mib": 2613.0,
+          "utilization_pct": 97.0,
+          "temperature_c": 81.0
+        },
+        {
+          "monotonic_s": 30951.243277362,
+          "used_mib": 3192.0,
+          "free_mib": 2613.0,
+          "utilization_pct": 94.0,
+          "temperature_c": 81.0
+        },
+        {
+          "monotonic_s": 30951.67338445,
+          "used_mib": 3192.0,
+          "free_mib": 2613.0,
+          "utilization_pct": 97.0,
+          "temperature_c": 82.0
+        },
+        {
+          "monotonic_s": 30952.101957243,
+          "used_mib": 3192.0,
+          "free_mib": 2613.0,
+          "utilization_pct": 97.0,
+          "temperature_c": 82.0
+        },
+        {
+          "monotonic_s": 30952.531563389,
+          "used_mib": 3192.0,
+          "free_mib": 2613.0,
+          "utilization_pct": 97.0,
+          "temperature_c": 82.0
+        }
+      ],
+      "first_request": {
+        "model": "qwen3:4b",
+        "created_at": "2026-10-20T19:17:17.976441197Z",
+        "done": true,
+        "done_reason": "length",
+        "total_duration": 3962814511,
+        "load_duration": 3710351643,
+        "prompt_eval_count": 41,
+        "prompt_eval_cached_count": 0,
+        "prompt_eval_duration": 87895000,
+        "eval_count": 16,
+        "eval_duration": 163228000,
+        "response": "Okay, the user wants me to reply with only \"READY\" followed by \"/",
+        "thinking": "",
+        "wall_s": 3.963305063000007,
+        "ttft_s": 3.8002679040000658,
+        "generation_tokens_s": 98.02239811796994
+      },
+      "loaded_state": {
+        "models": [
+          {
+            "name": "qwen3:4b",
+            "model": "qwen3:4b",
+            "size": 3180247121,
+            "digest": "359d7dd4bcdab3d86b87d73ac27966f4dbb9f5efdfcc75d34a8764a09474fae7",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen3",
+              "families": [
+                "qwen3"
+              ],
+              "parameter_size": "4.0B",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-20T16:27:17.976521346-03:00",
+            "size_vram": 3180247121,
+            "context_length": 4096,
+            "runner": "llamacpp"
+          }
+        ]
+      },
+      "loaded_memory": {
+        "MemTotal_kib": 15566716,
+        "MemAvailable_kib": 6430704,
+        "SwapTotal_kib": 8388604,
+        "SwapFree_kib": 3517020
+      },
+      "warmup": {
+        "model": "qwen3:4b",
+        "created_at": "2026-10-20T19:17:18.335950485Z",
+        "done": true,
+        "done_reason": "length",
+        "total_duration": 358420141,
+        "load_duration": 620325,
+        "prompt_eval_count": 44,
+        "prompt_eval_cached_count": 24,
+        "prompt_eval_duration": 20237000,
+        "eval_count": 32,
+        "eval_duration": 333114000,
+        "response": "Hmm, the user wants me to write one short sentence about organizing documents, with a specific instruction to use only the supplied documents for factual questions. But they also",
+        "thinking": "",
+        "wall_s": 0.3587527810013853,
+        "ttft_s": 0.0257318310032133,
+        "generation_tokens_s": 96.06320959191147
+      },
+      "unloaded_state": {
+        "models": []
+      },
+      "summary": {
+        "short": {
+          "median_generation_tokens_s": 93.29072085302703,
+          "median_ttft_s": 0.259955434998119,
+          "median_wall_s": 2.9993863069976214,
+          "prompt_tokens": [
+            96,
+            96,
+            96
+          ],
+          "generated_tokens": [
+            256,
+            256,
+            256
+          ]
+        },
+        "long": {
+          "median_generation_tokens_s": 84.13513680504705,
+          "median_ttft_s": 0.8797767739997653,
+          "median_wall_s": 3.9253743940025743,
+          "prompt_tokens": [
+            2669,
+            2669,
+            2669
+          ],
+          "generated_tokens": [
+            256,
+            256,
+            256
+          ]
+        },
+        "quality_passes": 0,
+        "quality_total": 6,
+        "peak_gpu_used_mib": 3192.0,
+        "peak_gpu_utilization_pct": 100.0,
+        "peak_temperature_c": 82.0
+      }
+    },
+    {
+      "model": "qwen3:0.6b",
+      "show": {
+        "thinking": {
+          "values": [
+            false,
+            true
+          ],
+          "default": true
+        },
+        "license": "                                 Apache License\n                           Version 2.0, January 2004\n                        http://www.apache.org/licenses/\n\n   TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION\n\n   1. Definitions.\n\n      \"License\" shall mean the terms and conditions for use, reproduction,\n      and distribution as defined by Sections 1 through 9 of this document.\n\n      \"Licensor\" shall mean the copyright owner or entity authorized by\n      the copyright owner that is granting the License.\n\n      \"Legal Entity\" shall mean the union of the acting entity and all\n      other entities that control, are controlled by, or are under common\n      control with that entity. For the purposes of this definition,\n      \"control\" means (i) the power, direct or indirect, to cause the\n      direction or management of such entity, whether by contract or\n      otherwise, or (ii) ownership of fifty percent (50%) or more of the\n      outstanding shares, or (iii) beneficial ownership of such entity.\n\n      \"You\" (or \"Your\") shall mean an individual or Legal Entity\n      exercising permissions granted by this License.\n\n      \"Source\" form shall mean the preferred form for making modifications,\n      including but not limited to software source code, documentation\n      source, and configuration files.\n\n      \"Object\" form shall mean any form resulting from mechanical\n      transformation or translation of a Source form, including but\n      not limited to compiled object code, generated documentation,\n      and conversions to other media types.\n\n      \"Work\" shall mean the work of authorship, whether in Source or\n      Object form, made available under the License, as indicated by a\n      copyright notice that is included in or attached to the work\n      (an example is provided in the Appendix below).\n\n      \"Derivative Works\" shall mean any work, whether in Source or Object\n      form, that is based on (or derived from) the Work and for which the\n      editorial revisions, annotations, elaborations, or other modifications\n      represent, as a whole, an original work of authorship. For the purposes\n      of this License, Derivative Works shall not include works that remain\n      separable from, or merely link (or bind by name) to the interfaces of,\n      the Work and Derivative Works thereof.\n\n      \"Contribution\" shall mean any work of authorship, including\n      the original version of the Work and any modifications or additions\n      to that Work or Derivative Works thereof, that is intentionally\n      submitted to Licensor for inclusion in the Work by the copyright owner\n      or by an individual or Legal Entity authorized to submit on behalf of\n      the copyright owner. For the purposes of this definition, \"submitted\"\n      means any form of electronic, verbal, or written communication sent\n      to the Licensor or its representatives, including but not limited to\n      communication on electronic mailing lists, source code control systems,\n      and issue tracking systems that are managed by, or on behalf of, the\n      Licensor for the purpose of discussing and improving the Work, but\n      excluding communication that is conspicuously marked or otherwise\n      designated in writing by the copyright owner as \"Not a Contribution.\"\n\n      \"Contributor\" shall mean Licensor and any individual or Legal Entity\n      on behalf of whom a Contribution has been received by Licensor and\n      subsequently incorporated within the Work.\n\n   2. Grant of Copyright License. Subject to the terms and conditions of\n      this License, each Contributor hereby grants to You a perpetual,\n      worldwide, non-exclusive, no-charge, royalty-free, irrevocable\n      copyright license to reproduce, prepare Derivative Works of,\n      publicly display, publicly perform, sublicense, and distribute the\n      Work and such Derivative Works in Source or Object form.\n\n   3. Grant of Patent License. Subject to the terms and conditions of\n      this License, each Contributor hereby grants to You a perpetual,\n      worldwide, non-exclusive, no-charge, royalty-free, irrevocable\n      (except as stated in this section) patent license to make, have made,\n      use, offer to sell, sell, import, and otherwise transfer the Work,\n      where such license applies only to those patent claims licensable\n      by such Contributor that are necessarily infringed by their\n      Contribution(s) alone or by combination of their Contribution(s)\n      with the Work to which such Contribution(s) was submitted. If You\n      institute patent litigation against any entity (including a\n      cross-claim or counterclaim in a lawsuit) alleging that the Work\n      or a Contribution incorporated within the Work constitutes direct\n      or contributory patent infringement, then any patent licenses\n      granted to You under this License for that Work shall terminate\n      as of the date such litigation is filed.\n\n   4. Redistribution. You may reproduce and distribute copies of the\n      Work or Derivative Works thereof in any medium, with or without\n      modifications, and in Source or Object form, provided that You\n      meet the following conditions:\n\n      (a) You must give any other recipients of the Work or\n          Derivative Works a copy of this License; and\n\n      (b) You must cause any modified files to carry prominent notices\n          stating that You changed the files; and\n\n      (c) You must retain, in the Source form of any Derivative Works\n          that You distribute, all copyright, patent, trademark, and\n          attribution notices from the Source form of the Work,\n          excluding those notices that do not pertain to any part of\n          the Derivative Works; and\n\n      (d) If the Work includes a \"NOTICE\" text file as part of its\n          distribution, then any Derivative Works that You distribute must\n          include a readable copy of the attribution notices contained\n          within such NOTICE file, excluding those notices that do not\n          pertain to any part of the Derivative Works, in at least one\n          of the following places: within a NOTICE text file distributed\n          as part of the Derivative Works; within the Source form or\n          documentation, if provided along with the Derivative Works; or,\n          within a display generated by the Derivative Works, if and\n          wherever such third-party notices normally appear. The contents\n          of the NOTICE file are for informational purposes only and\n          do not modify the License. You may add Your own attribution\n          notices within Derivative Works that You distribute, alongside\n          or as an addendum to the NOTICE text from the Work, provided\n          that such additional attribution notices cannot be construed\n          as modifying the License.\n\n      You may add Your own copyright statement to Your modifications and\n      may provide additional or different license terms and conditions\n      for use, reproduction, or distribution of Your modifications, or\n      for any such Derivative Works as a whole, provided Your use,\n      reproduction, and distribution of the Work otherwise complies with\n      the conditions stated in this License.\n\n   5. Submission of Contributions. Unless You explicitly state otherwise,\n      any Contribution intentionally submitted for inclusion in the Work\n      by You to the Licensor shall be under the terms and conditions of\n      this License, without any additional terms or conditions.\n      Notwithstanding the above, nothing herein shall supersede or modify\n      the terms of any separate license agreement you may have executed\n      with Licensor regarding such Contributions.\n\n   6. Trademarks. This License does not grant permission to use the trade\n      names, trademarks, service marks, or product names of the Licensor,\n      except as required for reasonable and customary use in describing the\n      origin of the Work and reproducing the content of the NOTICE file.\n\n   7. Disclaimer of Warranty. Unless required by applicable law or\n      agreed to in writing, Licensor provides the Work (and each\n      Contributor provides its Contributions) on an \"AS IS\" BASIS,\n      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or\n      implied, including, without limitation, any warranties or conditions\n      of TITLE, NON-INFRINGEMENT, MERCHANTABILITY, or FITNESS FOR A\n      PARTICULAR PURPOSE. You are solely responsible for determining the\n      appropriateness of using or redistributing the Work and assume any\n      risks associated with Your exercise of permissions under this License.\n\n   8. Limitation of Liability. In no event and under no legal theory,\n      whether in tort (including negligence), contract, or otherwise,\n      unless required by applicable law (such as deliberate and grossly\n      negligent acts) or agreed to in writing, shall any Contributor be\n      liable to You for damages, including any direct, indirect, special,\n      incidental, or consequential damages of any character arising as a\n      result of this License or out of the use or inability to use the\n      Work (including but not limited to damages for loss of goodwill,\n      work stoppage, computer failure or malfunction, or any and all\n      other commercial damages or losses), even if such Contributor\n      has been advised of the possibility of such damages.\n\n   9. Accepting Warranty or Additional Liability. While redistributing\n      the Work or Derivative Works thereof, You may choose to offer,\n      and charge a fee for, acceptance of support, warranty, indemnity,\n      or other liability obligations and/or rights consistent with this\n      License. However, in accepting such obligations, You may act only\n      on Your own behalf and on Your sole responsibility, not on behalf\n      of any other Contributor, and only if You agree to indemnify,\n      defend, and hold each Contributor harmless for any liability\n      incurred by, or claims asserted against, such Contributor by reason\n      of your accepting any such warranty or additional liability.\n\n   END OF TERMS AND CONDITIONS\n\n   APPENDIX: How to apply the Apache License to your work.\n\n      To apply the Apache License to your work, attach the following\n      boilerplate notice, with the fields enclosed by brackets \"[]\"\n      replaced with your own identifying information. (Don't include\n      the brackets!)  The text should be enclosed in the appropriate\n      comment syntax for the file format. We also recommend that a\n      file or class name and description of purpose be included on the\n      same \"printed page\" as the copyright notice for easier\n      identification within third-party archives.\n   Copyright 2024 Alibaba Cloud\n   Licensed under the Apache License, Version 2.0 (the \"License\");\n   you may not use this file except in compliance with the License.\n   You may obtain a copy of the License at\n       http://www.apache.org/licenses/LICENSE-2.0\n   Unless required by applicable law or agreed to in writing, software\n   distributed under the License is distributed on an \"AS IS\" BASIS,\n   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n   See the License for the specific language governing permissions and\n   limitations under the License.",
+        "modelfile": "# Modelfile generated by \"ollama show\"\n# To build a new Modelfile based on this, replace FROM with:\n# FROM qwen3:0.6b\n\nFROM /usr/share/ollama/.ollama/models/blobs/sha256-7f4030143c1c477224c5434f8272c662a8b042079a0a584f0a27a1684fe2e1fa\nTEMPLATE \"\"\"\n{{- $lastUserIdx := -1 -}}\n{{- range $idx, $msg := .Messages -}}\n{{- if eq $msg.Role \"user\" }}{{ $lastUserIdx = $idx }}{{ end -}}\n{{- end }}\n{{- if or .System .Tools }}<|im_start|>system\n{{ if .System }}\n{{ .System }}\n{{- end }}\n{{- if .Tools }}\n\n# Tools\n\nYou may call one or more functions to assist with the user query.\n\nYou are provided with function signatures within <tools></tools> XML tags:\n<tools>\n{{- range .Tools }}\n{\"type\": \"function\", \"function\": {{ .Function }}}\n{{- end }}\n</tools>\n\nFor each function call, return a json object with function name and arguments within <tool_call></tool_call> XML tags:\n<tool_call>\n{\"name\": <function-name>, \"arguments\": <args-json-object>}\n</tool_call>\n{{- end -}}\n<|im_end|>\n{{ end }}\n{{- range $i, $_ := .Messages }}\n{{- $last := eq (len (slice $.Messages $i)) 1 -}}\n{{- if eq .Role \"user\" }}<|im_start|>user\n{{ .Content }}\n{{- if and $.IsThinkSet (eq $i $lastUserIdx) }}\n   {{- if $.Think -}}\n      {{- \" \"}}/think\n   {{- else -}}\n      {{- \" \"}}/no_think\n   {{- end -}}\n{{- end }}<|im_end|>\n{{ else if eq .Role \"assistant\" }}<|im_start|>assistant\n{{ if (and $.IsThinkSet (and .Thinking (or $last (gt $i $lastUserIdx)))) -}}\n<think>{{ .Thinking }}</think>\n{{ end -}}\n{{ if .Content }}{{ .Content }}\n{{- else if .ToolCalls }}<tool_call>\n{{ range .ToolCalls }}{\"name\": \"{{ .Function.Name }}\", \"arguments\": {{ .Function.Arguments }}}\n{{ end }}</tool_call>\n{{- end }}{{ if not $last }}<|im_end|>\n{{ end }}\n{{- else if eq .Role \"tool\" }}<|im_start|>user\n<tool_response>\n{{ .Content }}\n</tool_response><|im_end|>\n{{ end }}\n{{- if and (ne .Role \"assistant\") $last }}<|im_start|>assistant\n{{ if and $.IsThinkSet (not $.Think) -}}\n<think>\n\n</think>\n\n{{ end -}}\n{{ end }}\n{{- end }}\"\"\"\nPARAMETER repeat_penalty 1\nPARAMETER stop <|im_start|>\nPARAMETER stop <|im_end|>\nPARAMETER temperature 0.6\nPARAMETER top_k 20\nPARAMETER top_p 0.95\nLICENSE \"\"\"                                 Apache License\n                           Version 2.0, January 2004\n                        http://www.apache.org/licenses/\n\n   TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION\n\n   1. Definitions.\n\n      \"License\" shall mean the terms and conditions for use, reproduction,\n      and distribution as defined by Sections 1 through 9 of this document.\n\n      \"Licensor\" shall mean the copyright owner or entity authorized by\n      the copyright owner that is granting the License.\n\n      \"Legal Entity\" shall mean the union of the acting entity and all\n      other entities that control, are controlled by, or are under common\n      control with that entity. For the purposes of this definition,\n      \"control\" means (i) the power, direct or indirect, to cause the\n      direction or management of such entity, whether by contract or\n      otherwise, or (ii) ownership of fifty percent (50%) or more of the\n      outstanding shares, or (iii) beneficial ownership of such entity.\n\n      \"You\" (or \"Your\") shall mean an individual or Legal Entity\n      exercising permissions granted by this License.\n\n      \"Source\" form shall mean the preferred form for making modifications,\n      including but not limited to software source code, documentation\n      source, and configuration files.\n\n      \"Object\" form shall mean any form resulting from mechanical\n      transformation or translation of a Source form, including but\n      not limited to compiled object code, generated documentation,\n      and conversions to other media types.\n\n      \"Work\" shall mean the work of authorship, whether in Source or\n      Object form, made available under the License, as indicated by a\n      copyright notice that is included in or attached to the work\n      (an example is provided in the Appendix below).\n\n      \"Derivative Works\" shall mean any work, whether in Source or Object\n      form, that is based on (or derived from) the Work and for which the\n      editorial revisions, annotations, elaborations, or other modifications\n      represent, as a whole, an original work of authorship. For the purposes\n      of this License, Derivative Works shall not include works that remain\n      separable from, or merely link (or bind by name) to the interfaces of,\n      the Work and Derivative Works thereof.\n\n      \"Contribution\" shall mean any work of authorship, including\n      the original version of the Work and any modifications or additions\n      to that Work or Derivative Works thereof, that is intentionally\n      submitted to Licensor for inclusion in the Work by the copyright owner\n      or by an individual or Legal Entity authorized to submit on behalf of\n      the copyright owner. For the purposes of this definition, \"submitted\"\n      means any form of electronic, verbal, or written communication sent\n      to the Licensor or its representatives, including but not limited to\n      communication on electronic mailing lists, source code control systems,\n      and issue tracking systems that are managed by, or on behalf of, the\n      Licensor for the purpose of discussing and improving the Work, but\n      excluding communication that is conspicuously marked or otherwise\n      designated in writing by the copyright owner as \"Not a Contribution.\"\n\n      \"Contributor\" shall mean Licensor and any individual or Legal Entity\n      on behalf of whom a Contribution has been received by Licensor and\n      subsequently incorporated within the Work.\n\n   2. Grant of Copyright License. Subject to the terms and conditions of\n      this License, each Contributor hereby grants to You a perpetual,\n      worldwide, non-exclusive, no-charge, royalty-free, irrevocable\n      copyright license to reproduce, prepare Derivative Works of,\n      publicly display, publicly perform, sublicense, and distribute the\n      Work and such Derivative Works in Source or Object form.\n\n   3. Grant of Patent License. Subject to the terms and conditions of\n      this License, each Contributor hereby grants to You a perpetual,\n      worldwide, non-exclusive, no-charge, royalty-free, irrevocable\n      (except as stated in this section) patent license to make, have made,\n      use, offer to sell, sell, import, and otherwise transfer the Work,\n      where such license applies only to those patent claims licensable\n      by such Contributor that are necessarily infringed by their\n      Contribution(s) alone or by combination of their Contribution(s)\n      with the Work to which such Contribution(s) was submitted. If You\n      institute patent litigation against any entity (including a\n      cross-claim or counterclaim in a lawsuit) alleging that the Work\n      or a Contribution incorporated within the Work constitutes direct\n      or contributory patent infringement, then any patent licenses\n      granted to You under this License for that Work shall terminate\n      as of the date such litigation is filed.\n\n   4. Redistribution. You may reproduce and distribute copies of the\n      Work or Derivative Works thereof in any medium, with or without\n      modifications, and in Source or Object form, provided that You\n      meet the following conditions:\n\n      (a) You must give any other recipients of the Work or\n          Derivative Works a copy of this License; and\n\n      (b) You must cause any modified files to carry prominent notices\n          stating that You changed the files; and\n\n      (c) You must retain, in the Source form of any Derivative Works\n          that You distribute, all copyright, patent, trademark, and\n          attribution notices from the Source form of the Work,\n          excluding those notices that do not pertain to any part of\n          the Derivative Works; and\n\n      (d) If the Work includes a \"NOTICE\" text file as part of its\n          distribution, then any Derivative Works that You distribute must\n          include a readable copy of the attribution notices contained\n          within such NOTICE file, excluding those notices that do not\n          pertain to any part of the Derivative Works, in at least one\n          of the following places: within a NOTICE text file distributed\n          as part of the Derivative Works; within the Source form or\n          documentation, if provided along with the Derivative Works; or,\n          within a display generated by the Derivative Works, if and\n          wherever such third-party notices normally appear. The contents\n          of the NOTICE file are for informational purposes only and\n          do not modify the License. You may add Your own attribution\n          notices within Derivative Works that You distribute, alongside\n          or as an addendum to the NOTICE text from the Work, provided\n          that such additional attribution notices cannot be construed\n          as modifying the License.\n\n      You may add Your own copyright statement to Your modifications and\n      may provide additional or different license terms and conditions\n      for use, reproduction, or distribution of Your modifications, or\n      for any such Derivative Works as a whole, provided Your use,\n      reproduction, and distribution of the Work otherwise complies with\n      the conditions stated in this License.\n\n   5. Submission of Contributions. Unless You explicitly state otherwise,\n      any Contribution intentionally submitted for inclusion in the Work\n      by You to the Licensor shall be under the terms and conditions of\n      this License, without any additional terms or conditions.\n      Notwithstanding the above, nothing herein shall supersede or modify\n      the terms of any separate license agreement you may have executed\n      with Licensor regarding such Contributions.\n\n   6. Trademarks. This License does not grant permission to use the trade\n      names, trademarks, service marks, or product names of the Licensor,\n      except as required for reasonable and customary use in describing the\n      origin of the Work and reproducing the content of the NOTICE file.\n\n   7. Disclaimer of Warranty. Unless required by applicable law or\n      agreed to in writing, Licensor provides the Work (and each\n      Contributor provides its Contributions) on an \"AS IS\" BASIS,\n      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or\n      implied, including, without limitation, any warranties or conditions\n      of TITLE, NON-INFRINGEMENT, MERCHANTABILITY, or FITNESS FOR A\n      PARTICULAR PURPOSE. You are solely responsible for determining the\n      appropriateness of using or redistributing the Work and assume any\n      risks associated with Your exercise of permissions under this License.\n\n   8. Limitation of Liability. In no event and under no legal theory,\n      whether in tort (including negligence), contract, or otherwise,\n      unless required by applicable law (such as deliberate and grossly\n      negligent acts) or agreed to in writing, shall any Contributor be\n      liable to You for damages, including any direct, indirect, special,\n      incidental, or consequential damages of any character arising as a\n      result of this License or out of the use or inability to use the\n      Work (including but not limited to damages for loss of goodwill,\n      work stoppage, computer failure or malfunction, or any and all\n      other commercial damages or losses), even if such Contributor\n      has been advised of the possibility of such damages.\n\n   9. Accepting Warranty or Additional Liability. While redistributing\n      the Work or Derivative Works thereof, You may choose to offer,\n      and charge a fee for, acceptance of support, warranty, indemnity,\n      or other liability obligations and/or rights consistent with this\n      License. However, in accepting such obligations, You may act only\n      on Your own behalf and on Your sole responsibility, not on behalf\n      of any other Contributor, and only if You agree to indemnify,\n      defend, and hold each Contributor harmless for any liability\n      incurred by, or claims asserted against, such Contributor by reason\n      of your accepting any such warranty or additional liability.\n\n   END OF TERMS AND CONDITIONS\n\n   APPENDIX: How to apply the Apache License to your work.\n\n      To apply the Apache License to your work, attach the following\n      boilerplate notice, with the fields enclosed by brackets \"[]\"\n      replaced with your own identifying information. (Don't include\n      the brackets!)  The text should be enclosed in the appropriate\n      comment syntax for the file format. We also recommend that a\n      file or class name and description of purpose be included on the\n      same \"printed page\" as the copyright notice for easier\n      identification within third-party archives.\n   Copyright 2024 Alibaba Cloud\n   Licensed under the Apache License, Version 2.0 (the \"License\");\n   you may not use this file except in compliance with the License.\n   You may obtain a copy of the License at\n       http://www.apache.org/licenses/LICENSE-2.0\n   Unless required by applicable law or agreed to in writing, software\n   distributed under the License is distributed on an \"AS IS\" BASIS,\n   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n   See the License for the specific language governing permissions and\n   limitations under the License.\"\"\"\n",
+        "parameters": "repeat_penalty                 1\nstop                           \"<|im_start|>\"\nstop                           \"<|im_end|>\"\ntemperature                    0.6\ntop_k                          20\ntop_p                          0.95",
+        "template": "\n{{- $lastUserIdx := -1 -}}\n{{- range $idx, $msg := .Messages -}}\n{{- if eq $msg.Role \"user\" }}{{ $lastUserIdx = $idx }}{{ end -}}\n{{- end }}\n{{- if or .System .Tools }}<|im_start|>system\n{{ if .System }}\n{{ .System }}\n{{- end }}\n{{- if .Tools }}\n\n# Tools\n\nYou may call one or more functions to assist with the user query.\n\nYou are provided with function signatures within <tools></tools> XML tags:\n<tools>\n{{- range .Tools }}\n{\"type\": \"function\", \"function\": {{ .Function }}}\n{{- end }}\n</tools>\n\nFor each function call, return a json object with function name and arguments within <tool_call></tool_call> XML tags:\n<tool_call>\n{\"name\": <function-name>, \"arguments\": <args-json-object>}\n</tool_call>\n{{- end -}}\n<|im_end|>\n{{ end }}\n{{- range $i, $_ := .Messages }}\n{{- $last := eq (len (slice $.Messages $i)) 1 -}}\n{{- if eq .Role \"user\" }}<|im_start|>user\n{{ .Content }}\n{{- if and $.IsThinkSet (eq $i $lastUserIdx) }}\n   {{- if $.Think -}}\n      {{- \" \"}}/think\n   {{- else -}}\n      {{- \" \"}}/no_think\n   {{- end -}}\n{{- end }}<|im_end|>\n{{ else if eq .Role \"assistant\" }}<|im_start|>assistant\n{{ if (and $.IsThinkSet (and .Thinking (or $last (gt $i $lastUserIdx)))) -}}\n<think>{{ .Thinking }}</think>\n{{ end -}}\n{{ if .Content }}{{ .Content }}\n{{- else if .ToolCalls }}<tool_call>\n{{ range .ToolCalls }}{\"name\": \"{{ .Function.Name }}\", \"arguments\": {{ .Function.Arguments }}}\n{{ end }}</tool_call>\n{{- end }}{{ if not $last }}<|im_end|>\n{{ end }}\n{{- else if eq .Role \"tool\" }}<|im_start|>user\n<tool_response>\n{{ .Content }}\n</tool_response><|im_end|>\n{{ end }}\n{{- if and (ne .Role \"assistant\") $last }}<|im_start|>assistant\n{{ if and $.IsThinkSet (not $.Think) -}}\n<think>\n\n</think>\n\n{{ end -}}\n{{ end }}\n{{- end }}",
+        "details": {
+          "parent_model": "",
+          "format": "gguf",
+          "family": "qwen3",
+          "families": [
+            "qwen3"
+          ],
+          "parameter_size": "751.63M",
+          "quantization_level": "Q4_K_M"
+        },
+        "model_info": {
+          "general.architecture": "qwen3",
+          "general.basename": "Qwen3",
+          "general.file_type": 15,
+          "general.license": "apache-2.0",
+          "general.parameter_count": 751632384,
+          "general.quantization_version": 2,
+          "general.size_label": "0.6B",
+          "general.type": "model",
+          "qwen3.attention.head_count": 16,
+          "qwen3.attention.head_count_kv": 8,
+          "qwen3.attention.key_length": 128,
+          "qwen3.attention.layer_norm_rms_epsilon": 1e-06,
+          "qwen3.attention.value_length": 128,
+          "qwen3.block_count": 28,
+          "qwen3.context_length": 40960,
+          "qwen3.embedding_length": 1024,
+          "qwen3.feed_forward_length": 3072,
+          "qwen3.rope.freq_base": 1000000,
+          "tokenizer.ggml.add_bos_token": false,
+          "tokenizer.ggml.bos_token_id": 151643,
+          "tokenizer.ggml.eos_token_id": 151645,
+          "tokenizer.ggml.merges": [],
+          "tokenizer.ggml.model": "gpt2",
+          "tokenizer.ggml.padding_token_id": 151643,
+          "tokenizer.ggml.pre": "qwen2",
+          "tokenizer.ggml.token_type": [],
+          "tokenizer.ggml.tokens": []
+        },
+        "capabilities": [
+          "completion",
+          "tools",
+          "thinking"
+        ],
+        "modified_at": "2026-10-20T16:13:55.881954944-03:00"
+      },
+      "runs": [
+        {
+          "kind": "short",
+          "repetition": 1,
+          "prompt": "Benchmark request 1. Write 1000 numbered, distinct, one-sentence tips for organizing a personal document library. Include tips about filenames, backups, tags, folders, and search. Do not add an introduction or conclusion. Continue until all 1000 tips are written.",
+          "metrics": {
+            "model": "qwen3:0.6b",
+            "created_at": "2026-10-20T19:17:59.979454817Z",
+            "done": true,
+            "done_reason": "length",
+            "total_duration": 860751457,
+            "load_duration": 665459,
+            "prompt_eval_count": 96,
+            "prompt_eval_cached_count": 24,
+            "prompt_eval_duration": 11620000,
+            "eval_count": 256,
+            "eval_duration": 842915000,
+            "response": "1. Organize your documents into clear folders to keep everything organized.  \n2. Use descriptive filenames to make searching easier.  \n3. Keep backups of your documents to avoid data loss.  \n4. Add tags to categorize your files for better organization.  \n5. Regularly clean and update your document library to keep it up-to-date.  \n6. Use search features to quickly find what you need.  \n7. Keep your document library organized by size and accessibility.  \n8. Store frequently used documents in a dedicated folder.  \n9. Keep your document library updated with new files and changes.  \n10. Use tags to help you find documents that match your needs.  \n11. Keep your document library organized by date and purpose.  \n12. Keep your document library free of clutter.  \n13. Keep your document library organized by category.  \n14. Keep your document library organized by purpose.  \n15. Keep your document library organized by size.  \n16. Keep your document library organized by accessibility.  \n17. Keep your document library organized by frequency.  \n18. Keep your document library organized by usage.  \n19. Keep your document library organized by time.  \n20. Keep your document library",
+            "thinking": "",
+            "wall_s": 0.8612180560012348,
+            "ttft_s": 0.01851011700273375,
+            "generation_tokens_s": 303.7079658091267
+          }
+        },
+        {
+          "kind": "long",
+          "repetition": 1,
+          "prompt": "Benchmark request 1. Use only the following workspace records.\n[P01] Record W001: region=EU; plan=Pro; backups=enabled; active_users=41; owner=team-01. This record is an independent workspace snapshot.\n[P02] Record W002: region=EU; plan=Basic; backups=enabled; active_users=42; owner=team-02. This record is an independent workspace snapshot.\n[P03] Record W003: region=US; plan=Pro; backups=enabled; active_users=43; owner=team-03. This record is an independent workspace snapshot.\n[P04] Record W004: region=EU; plan=Basic; backups=disabled; active_users=44; owner=team-04. This record is an independent workspace snapshot.\n[P05] Record W005: region=EU; plan=Pro; backups=enabled; active_users=45; owner=team-05. This record is an independent workspace snapshot.\n[P06] Record W006: region=US; plan=Basic; backups=enabled; active_users=46; owner=team-06. This record is an independent workspace snapshot.\n[P07] Record W007: region=EU; plan=Pro; backups=enabled; active_users=47; owner=team-07. This record is an independent workspace snapshot.\n[P08] Record W008: region=EU; plan=Basic; backups=disabled; active_users=48; owner=team-08. This record is an independent workspace snapshot.\n[P09] Record W009: region=US; plan=Pro; backups=enabled; active_users=49; owner=team-09. This record is an independent workspace snapshot.\n[P10] Record W010: region=EU; plan=Basic; backups=enabled; active_users=50; owner=team-10. This record is an independent workspace snapshot.\n[P11] Record W011: region=EU; plan=Pro; backups=enabled; active_users=51; owner=team-11. This record is an independent workspace snapshot.\n[P12] Record W012: region=US; plan=Basic; backups=disabled; active_users=52; owner=team-12. This record is an independent workspace snapshot.\n[P13] Record W013: region=EU; plan=Pro; backups=enabled; active_users=53; owner=team-13. This record is an independent workspace snapshot.\n[P14] Record W014: region=EU; plan=Basic; backups=enabled; active_users=54; owner=team-14. This record is an independent workspace snapshot.\n[P15] Record W015: region=US; plan=Pro; backups=enabled; active_users=55; owner=team-15. This record is an independent workspace snapshot.\n[P16] Record W016: region=EU; plan=Basic; backups=disabled; active_users=56; owner=team-16. This record is an independent workspace snapshot.\n[P17] Record W017: region=EU; plan=Pro; backups=enabled; active_users=57; owner=team-17. This record is an independent workspace snapshot.\n[P18] Record W018: region=US; plan=Basic; backups=enabled; active_users=58; owner=team-18. This record is an independent workspace snapshot.\n[P19] Record W019: region=EU; plan=Pro; backups=enabled; active_users=59; owner=team-19. This record is an independent workspace snapshot.\n[P20] Record W020: region=EU; plan=Basic; backups=disabled; active_users=60; owner=team-20. This record is an independent workspace snapshot.\n[P21] Record W021: region=US; plan=Pro; backups=enabled; active_users=61; owner=team-21. This record is an independent workspace snapshot.\n[P22] Record W022: region=EU; plan=Basic; backups=enabled; active_users=62; owner=team-22. This record is an independent workspace snapshot.\n[P23] Record W023: region=EU; plan=Pro; backups=enabled; active_users=63; owner=team-23. This record is an independent workspace snapshot.\n[P24] Record W024: region=US; plan=Basic; backups=disabled; active_users=64; owner=team-24. This record is an independent workspace snapshot.\n[P25] Record W025: region=EU; plan=Pro; backups=enabled; active_users=65; owner=team-25. This record is an independent workspace snapshot.\n[P26] Record W026: region=EU; plan=Basic; backups=enabled; active_users=66; owner=team-26. This record is an independent workspace snapshot.\n[P27] Record W027: region=US; plan=Pro; backups=enabled; active_users=67; owner=team-27. This record is an independent workspace snapshot.\n[P28] Record W028: region=EU; plan=Basic; backups=disabled; active_users=68; owner=team-28. This record is an independent workspace snapshot.\n[P29] Record W029: region=EU; plan=Pro; backups=enabled; active_users=69; owner=team-29. This record is an independent workspace snapshot.\n[P30] Record W030: region=US; plan=Basic; backups=enabled; active_users=70; owner=team-30. This record is an independent workspace snapshot.\n[P31] Record W031: region=EU; plan=Pro; backups=enabled; active_users=71; owner=team-31. This record is an independent workspace snapshot.\n[P32] Record W032: region=EU; plan=Basic; backups=disabled; active_users=72; owner=team-32. This record is an independent workspace snapshot.\n[P33] Record W033: region=US; plan=Pro; backups=enabled; active_users=73; owner=team-33. This record is an independent workspace snapshot.\n[P34] Record W034: region=EU; plan=Basic; backups=enabled; active_users=74; owner=team-34. This record is an independent workspace snapshot.\n[P35] Record W035: region=EU; plan=Pro; backups=enabled; active_users=75; owner=team-35. This record is an independent workspace snapshot.\n[P36] Record W036: region=US; plan=Basic; backups=disabled; active_users=76; owner=team-36. This record is an independent workspace snapshot.\n[P37] Record W037: region=EU; plan=Pro; backups=enabled; active_users=77; owner=team-37. This record is an independent workspace snapshot.\n[P38] Record W038: region=EU; plan=Basic; backups=enabled; active_users=78; owner=team-38. This record is an independent workspace snapshot.\n[P39] Record W039: region=US; plan=Pro; backups=enabled; active_users=79; owner=team-39. This record is an independent workspace snapshot.\n[P40] Record W040: region=EU; plan=Basic; backups=disabled; active_users=80; owner=team-40. This record is an independent workspace snapshot.\n[P41] Record W041: region=EU; plan=Pro; backups=enabled; active_users=81; owner=team-41. This record is an independent workspace snapshot.\n[P42] Record W042: region=US; plan=Basic; backups=enabled; active_users=82; owner=team-42. This record is an independent workspace snapshot.\n[P43] Record W043: region=EU; plan=Pro; backups=enabled; active_users=83; owner=team-43. This record is an independent workspace snapshot.\n[P44] Record W044: region=EU; plan=Basic; backups=disabled; active_users=84; owner=team-44. This record is an independent workspace snapshot.\n[P45] Record W045: region=US; plan=Pro; backups=enabled; active_users=85; owner=team-45. This record is an independent workspace snapshot.\n[P46] Record W046: region=EU; plan=Basic; backups=enabled; active_users=86; owner=team-46. This record is an independent workspace snapshot.\n[P47] Record W047: region=EU; plan=Pro; backups=enabled; active_users=87; owner=team-47. This record is an independent workspace snapshot.\n[P48] Record W048: region=US; plan=Basic; backups=disabled; active_users=88; owner=team-48. This record is an independent workspace snapshot.\n[P49] Record W049: region=EU; plan=Pro; backups=enabled; active_users=89; owner=team-49. This record is an independent workspace snapshot.\n[P50] Record W050: region=EU; plan=Basic; backups=enabled; active_users=90; owner=team-50. This record is an independent workspace snapshot.\n[P51] Record W051: region=US; plan=Pro; backups=enabled; active_users=91; owner=team-51. This record is an independent workspace snapshot.\n[P52] Record W052: region=EU; plan=Basic; backups=disabled; active_users=92; owner=team-52. This record is an independent workspace snapshot.\n[P53] Record W053: region=EU; plan=Pro; backups=enabled; active_users=93; owner=team-53. This record is an independent workspace snapshot.\n[P54] Record W054: region=US; plan=Basic; backups=enabled; active_users=94; owner=team-54. This record is an independent workspace snapshot.\n[P55] Record W055: region=EU; plan=Pro; backups=enabled; active_users=95; owner=team-55. This record is an independent workspace snapshot.\n[P56] Record W056: region=EU; plan=Basic; backups=disabled; active_users=96; owner=team-56. This record is an independent workspace snapshot.\n[P57] Record W057: region=US; plan=Pro; backups=enabled; active_users=97; owner=team-57. This record is an independent workspace snapshot.\n[P58] Record W058: region=EU; plan=Basic; backups=enabled; active_users=98; owner=team-58. This record is an independent workspace snapshot.\n[P59] Record W059: region=EU; plan=Pro; backups=enabled; active_users=99; owner=team-59. This record is an independent workspace snapshot.\n[P60] Record W060: region=US; plan=Basic; backups=disabled; active_users=100; owner=team-60. This record is an independent workspace snapshot.\nList every EU workspace as a numbered list. For each, report its ID, plan, backup status, active user count, owner, and source passage. Include every matching workspace; do not summarize.",
+          "metrics": {
+            "model": "qwen3:0.6b",
+            "created_at": "2026-10-20T19:18:01.32522877Z",
+            "done": true,
+            "done_reason": "length",
+            "total_duration": 1343577464,
+            "load_duration": 784711,
+            "prompt_eval_count": 2669,
+            "prompt_eval_cached_count": 29,
+            "prompt_eval_duration": 221847000,
+            "eval_count": 256,
+            "eval_duration": 1087265000,
+            "response": "1. **W001**  \n   - Region: EU  \n   - Plan: Pro  \n   - Backups: enabled  \n   - Active users: 41  \n   - Owner: team-01  \n   - Source passage: [P01]  \n\n2. **W002**  \n   - Region: EU  \n   - Plan: Basic  \n   - Backups: enabled  \n   - Active users: 42  \n   - Owner: team-02  \n   - Source passage: [P02]  \n\n3. **W003**  \n   - Region: US  \n   - Plan: Pro  \n   - Backups: enabled  \n   - Active users: 43  \n   - Owner: team-03  \n   - Source passage: [P03]  \n\n4. **W004**  \n   - Region: EU  \n   - Plan: Basic  \n   - Backups: disabled  \n   - Active users: 44  \n   - Owner: team-04  \n   - Source passage: [P04]  \n\n5. **W005**  \n   - Region: EU  \n   - Plan: Pro  \n   - Backups: enabled  \n",
+            "thinking": "",
+            "wall_s": 1.3441256240002986,
+            "ttft_s": 0.25669682899751933,
+            "generation_tokens_s": 235.4531783879735
+          }
+        },
+        {
+          "kind": "short",
+          "repetition": 2,
+          "prompt": "Benchmark request 2. Write 1000 numbered, distinct, one-sentence tips for organizing a personal document library. Include tips about filenames, backups, tags, folders, and search. Do not add an introduction or conclusion. Continue until all 1000 tips are written.",
+          "metrics": {
+            "model": "qwen3:0.6b",
+            "created_at": "2026-10-20T19:18:02.367064101Z",
+            "done": true,
+            "done_reason": "length",
+            "total_duration": 1039367907,
+            "load_duration": 1429120,
+            "prompt_eval_count": 96,
+            "prompt_eval_cached_count": 27,
+            "prompt_eval_duration": 10236000,
+            "eval_count": 256,
+            "eval_duration": 848561000,
+            "response": "1. Organize your documents into distinct folders to keep everything organized.  \n2. Use filenames that include a descriptive name and a timestamp to make searches easier.  \n3. Keep backups of your documents in secure locations to avoid data loss.  \n4. Add tags to your files to help with searches and categorization.  \n5. Create a search bar in your document management system to quickly find files.  \n6. Keep your document library up-to-date with the latest files and updates.  \n7. Use a consistent naming convention for all your files to make them easier to identify.  \n8. Store your documents in a physical or cloud-based location to protect them from loss.  \n9. Keep track of all your documents in a single, centralized location.  \n10. Regularly clean and organize your document library to maintain efficiency.  \n11. Use a search feature in your document management system to quickly locate files.  \n12. Keep your document library updated with the latest files and changes.  \n13. Use a naming convention that is easy to understand and maintain.  \n14. Store your documents in a secure and accessible location.  \n15. Keep your document library organized and easy to access.  \n16. Use a search feature in your",
+            "thinking": "",
+            "wall_s": 1.0400192600027367,
+            "ttft_s": 0.19124937700325972,
+            "generation_tokens_s": 301.6872092872522
+          }
+        },
+        {
+          "kind": "long",
+          "repetition": 2,
+          "prompt": "Benchmark request 2. Use only the following workspace records.\n[P01] Record W001: region=EU; plan=Pro; backups=enabled; active_users=41; owner=team-01. This record is an independent workspace snapshot.\n[P02] Record W002: region=EU; plan=Basic; backups=enabled; active_users=42; owner=team-02. This record is an independent workspace snapshot.\n[P03] Record W003: region=US; plan=Pro; backups=enabled; active_users=43; owner=team-03. This record is an independent workspace snapshot.\n[P04] Record W004: region=EU; plan=Basic; backups=disabled; active_users=44; owner=team-04. This record is an independent workspace snapshot.\n[P05] Record W005: region=EU; plan=Pro; backups=enabled; active_users=45; owner=team-05. This record is an independent workspace snapshot.\n[P06] Record W006: region=US; plan=Basic; backups=enabled; active_users=46; owner=team-06. This record is an independent workspace snapshot.\n[P07] Record W007: region=EU; plan=Pro; backups=enabled; active_users=47; owner=team-07. This record is an independent workspace snapshot.\n[P08] Record W008: region=EU; plan=Basic; backups=disabled; active_users=48; owner=team-08. This record is an independent workspace snapshot.\n[P09] Record W009: region=US; plan=Pro; backups=enabled; active_users=49; owner=team-09. This record is an independent workspace snapshot.\n[P10] Record W010: region=EU; plan=Basic; backups=enabled; active_users=50; owner=team-10. This record is an independent workspace snapshot.\n[P11] Record W011: region=EU; plan=Pro; backups=enabled; active_users=51; owner=team-11. This record is an independent workspace snapshot.\n[P12] Record W012: region=US; plan=Basic; backups=disabled; active_users=52; owner=team-12. This record is an independent workspace snapshot.\n[P13] Record W013: region=EU; plan=Pro; backups=enabled; active_users=53; owner=team-13. This record is an independent workspace snapshot.\n[P14] Record W014: region=EU; plan=Basic; backups=enabled; active_users=54; owner=team-14. This record is an independent workspace snapshot.\n[P15] Record W015: region=US; plan=Pro; backups=enabled; active_users=55; owner=team-15. This record is an independent workspace snapshot.\n[P16] Record W016: region=EU; plan=Basic; backups=disabled; active_users=56; owner=team-16. This record is an independent workspace snapshot.\n[P17] Record W017: region=EU; plan=Pro; backups=enabled; active_users=57; owner=team-17. This record is an independent workspace snapshot.\n[P18] Record W018: region=US; plan=Basic; backups=enabled; active_users=58; owner=team-18. This record is an independent workspace snapshot.\n[P19] Record W019: region=EU; plan=Pro; backups=enabled; active_users=59; owner=team-19. This record is an independent workspace snapshot.\n[P20] Record W020: region=EU; plan=Basic; backups=disabled; active_users=60; owner=team-20. This record is an independent workspace snapshot.\n[P21] Record W021: region=US; plan=Pro; backups=enabled; active_users=61; owner=team-21. This record is an independent workspace snapshot.\n[P22] Record W022: region=EU; plan=Basic; backups=enabled; active_users=62; owner=team-22. This record is an independent workspace snapshot.\n[P23] Record W023: region=EU; plan=Pro; backups=enabled; active_users=63; owner=team-23. This record is an independent workspace snapshot.\n[P24] Record W024: region=US; plan=Basic; backups=disabled; active_users=64; owner=team-24. This record is an independent workspace snapshot.\n[P25] Record W025: region=EU; plan=Pro; backups=enabled; active_users=65; owner=team-25. This record is an independent workspace snapshot.\n[P26] Record W026: region=EU; plan=Basic; backups=enabled; active_users=66; owner=team-26. This record is an independent workspace snapshot.\n[P27] Record W027: region=US; plan=Pro; backups=enabled; active_users=67; owner=team-27. This record is an independent workspace snapshot.\n[P28] Record W028: region=EU; plan=Basic; backups=disabled; active_users=68; owner=team-28. This record is an independent workspace snapshot.\n[P29] Record W029: region=EU; plan=Pro; backups=enabled; active_users=69; owner=team-29. This record is an independent workspace snapshot.\n[P30] Record W030: region=US; plan=Basic; backups=enabled; active_users=70; owner=team-30. This record is an independent workspace snapshot.\n[P31] Record W031: region=EU; plan=Pro; backups=enabled; active_users=71; owner=team-31. This record is an independent workspace snapshot.\n[P32] Record W032: region=EU; plan=Basic; backups=disabled; active_users=72; owner=team-32. This record is an independent workspace snapshot.\n[P33] Record W033: region=US; plan=Pro; backups=enabled; active_users=73; owner=team-33. This record is an independent workspace snapshot.\n[P34] Record W034: region=EU; plan=Basic; backups=enabled; active_users=74; owner=team-34. This record is an independent workspace snapshot.\n[P35] Record W035: region=EU; plan=Pro; backups=enabled; active_users=75; owner=team-35. This record is an independent workspace snapshot.\n[P36] Record W036: region=US; plan=Basic; backups=disabled; active_users=76; owner=team-36. This record is an independent workspace snapshot.\n[P37] Record W037: region=EU; plan=Pro; backups=enabled; active_users=77; owner=team-37. This record is an independent workspace snapshot.\n[P38] Record W038: region=EU; plan=Basic; backups=enabled; active_users=78; owner=team-38. This record is an independent workspace snapshot.\n[P39] Record W039: region=US; plan=Pro; backups=enabled; active_users=79; owner=team-39. This record is an independent workspace snapshot.\n[P40] Record W040: region=EU; plan=Basic; backups=disabled; active_users=80; owner=team-40. This record is an independent workspace snapshot.\n[P41] Record W041: region=EU; plan=Pro; backups=enabled; active_users=81; owner=team-41. This record is an independent workspace snapshot.\n[P42] Record W042: region=US; plan=Basic; backups=enabled; active_users=82; owner=team-42. This record is an independent workspace snapshot.\n[P43] Record W043: region=EU; plan=Pro; backups=enabled; active_users=83; owner=team-43. This record is an independent workspace snapshot.\n[P44] Record W044: region=EU; plan=Basic; backups=disabled; active_users=84; owner=team-44. This record is an independent workspace snapshot.\n[P45] Record W045: region=US; plan=Pro; backups=enabled; active_users=85; owner=team-45. This record is an independent workspace snapshot.\n[P46] Record W046: region=EU; plan=Basic; backups=enabled; active_users=86; owner=team-46. This record is an independent workspace snapshot.\n[P47] Record W047: region=EU; plan=Pro; backups=enabled; active_users=87; owner=team-47. This record is an independent workspace snapshot.\n[P48] Record W048: region=US; plan=Basic; backups=disabled; active_users=88; owner=team-48. This record is an independent workspace snapshot.\n[P49] Record W049: region=EU; plan=Pro; backups=enabled; active_users=89; owner=team-49. This record is an independent workspace snapshot.\n[P50] Record W050: region=EU; plan=Basic; backups=enabled; active_users=90; owner=team-50. This record is an independent workspace snapshot.\n[P51] Record W051: region=US; plan=Pro; backups=enabled; active_users=91; owner=team-51. This record is an independent workspace snapshot.\n[P52] Record W052: region=EU; plan=Basic; backups=disabled; active_users=92; owner=team-52. This record is an independent workspace snapshot.\n[P53] Record W053: region=EU; plan=Pro; backups=enabled; active_users=93; owner=team-53. This record is an independent workspace snapshot.\n[P54] Record W054: region=US; plan=Basic; backups=enabled; active_users=94; owner=team-54. This record is an independent workspace snapshot.\n[P55] Record W055: region=EU; plan=Pro; backups=enabled; active_users=95; owner=team-55. This record is an independent workspace snapshot.\n[P56] Record W056: region=EU; plan=Basic; backups=disabled; active_users=96; owner=team-56. This record is an independent workspace snapshot.\n[P57] Record W057: region=US; plan=Pro; backups=enabled; active_users=97; owner=team-57. This record is an independent workspace snapshot.\n[P58] Record W058: region=EU; plan=Basic; backups=enabled; active_users=98; owner=team-58. This record is an independent workspace snapshot.\n[P59] Record W059: region=EU; plan=Pro; backups=enabled; active_users=99; owner=team-59. This record is an independent workspace snapshot.\n[P60] Record W060: region=US; plan=Basic; backups=disabled; active_users=100; owner=team-60. This record is an independent workspace snapshot.\nList every EU workspace as a numbered list. For each, report its ID, plan, backup status, active user count, owner, and source passage. Include every matching workspace; do not summarize.",
+          "metrics": {
+            "model": "qwen3:0.6b",
+            "created_at": "2026-10-20T19:18:03.702185604Z",
+            "done": true,
+            "done_reason": "length",
+            "total_duration": 1332259125,
+            "load_duration": 777758,
+            "prompt_eval_count": 2669,
+            "prompt_eval_cached_count": 29,
+            "prompt_eval_duration": 219059000,
+            "eval_count": 256,
+            "eval_duration": 1081775000,
+            "response": "1. **W001**  \n   - Region: EU  \n   - Plan: Pro  \n   - Backups: enabled  \n   - Active users: 41  \n   - Owner: team-01  \n   - Source passage: [P01]  \n\n2. **W002**  \n   - Region: EU  \n   - Plan: Basic  \n   - Backups: enabled  \n   - Active users: 42  \n   - Owner: team-02  \n   - Source passage: [P02]  \n\n3. **W003**  \n   - Region: US  \n   - Plan: Pro  \n   - Backups: enabled  \n   - Active users: 43  \n   - Owner: team-03  \n   - Source passage: [P03]  \n\n4. **W004**  \n   - Region: EU  \n   - Plan: Basic  \n   - Backups: disabled  \n   - Active users: 44  \n   - Owner: team-04  \n   - Source passage: [P04]  \n\n5. **W005**  \n   - Region: EU  \n   - Plan: Pro  \n   - Backups: enabled  \n",
+            "thinking": "",
+            "wall_s": 1.3328119629986759,
+            "ttft_s": 0.25106143899756717,
+            "generation_tokens_s": 236.6481014998498
+          }
+        },
+        {
+          "kind": "short",
+          "repetition": 3,
+          "prompt": "Benchmark request 3. Write 1000 numbered, distinct, one-sentence tips for organizing a personal document library. Include tips about filenames, backups, tags, folders, and search. Do not add an introduction or conclusion. Continue until all 1000 tips are written.",
+          "metrics": {
+            "model": "qwen3:0.6b",
+            "created_at": "2026-10-20T19:18:04.541587168Z",
+            "done": true,
+            "done_reason": "stop",
+            "total_duration": 837001396,
+            "load_duration": 725952,
+            "prompt_eval_count": 96,
+            "prompt_eval_cached_count": 27,
+            "prompt_eval_duration": 10255000,
+            "eval_count": 195,
+            "eval_duration": 639894000,
+            "response": "1. Organize your personal document library by creating a clear structure, such as folders and subfolders, to keep everything organized.  \n2. Use filenames that are descriptive and include relevant keywords to make searching easier.  \n3. Regularly back up your documents to prevent data loss in case of unexpected events.  \n4. Maintain a consistent naming convention for all files to ensure clarity and ease of access.  \n5. Create a search feature in your document library to quickly locate files based on content or keywords.  \n6. Keep your document library organized by categorizing files into relevant sections.  \n7. Use tags to categorize and filter documents, making it easier to find what you need.  \n8. Store your documents in a physical or cloud-based location to ensure accessibility.  \n9. Keep your document library updated with new files and documents as they become available.  \n10. Regularly clean and organize your document library to maintain a tidy and efficient environment.",
+            "thinking": "",
+            "wall_s": 0.8375291279990051,
+            "ttft_s": 0.1976091959986661,
+            "generation_tokens_s": 304.7379722266501
+          }
+        },
+        {
+          "kind": "long",
+          "repetition": 3,
+          "prompt": "Benchmark request 3. Use only the following workspace records.\n[P01] Record W001: region=EU; plan=Pro; backups=enabled; active_users=41; owner=team-01. This record is an independent workspace snapshot.\n[P02] Record W002: region=EU; plan=Basic; backups=enabled; active_users=42; owner=team-02. This record is an independent workspace snapshot.\n[P03] Record W003: region=US; plan=Pro; backups=enabled; active_users=43; owner=team-03. This record is an independent workspace snapshot.\n[P04] Record W004: region=EU; plan=Basic; backups=disabled; active_users=44; owner=team-04. This record is an independent workspace snapshot.\n[P05] Record W005: region=EU; plan=Pro; backups=enabled; active_users=45; owner=team-05. This record is an independent workspace snapshot.\n[P06] Record W006: region=US; plan=Basic; backups=enabled; active_users=46; owner=team-06. This record is an independent workspace snapshot.\n[P07] Record W007: region=EU; plan=Pro; backups=enabled; active_users=47; owner=team-07. This record is an independent workspace snapshot.\n[P08] Record W008: region=EU; plan=Basic; backups=disabled; active_users=48; owner=team-08. This record is an independent workspace snapshot.\n[P09] Record W009: region=US; plan=Pro; backups=enabled; active_users=49; owner=team-09. This record is an independent workspace snapshot.\n[P10] Record W010: region=EU; plan=Basic; backups=enabled; active_users=50; owner=team-10. This record is an independent workspace snapshot.\n[P11] Record W011: region=EU; plan=Pro; backups=enabled; active_users=51; owner=team-11. This record is an independent workspace snapshot.\n[P12] Record W012: region=US; plan=Basic; backups=disabled; active_users=52; owner=team-12. This record is an independent workspace snapshot.\n[P13] Record W013: region=EU; plan=Pro; backups=enabled; active_users=53; owner=team-13. This record is an independent workspace snapshot.\n[P14] Record W014: region=EU; plan=Basic; backups=enabled; active_users=54; owner=team-14. This record is an independent workspace snapshot.\n[P15] Record W015: region=US; plan=Pro; backups=enabled; active_users=55; owner=team-15. This record is an independent workspace snapshot.\n[P16] Record W016: region=EU; plan=Basic; backups=disabled; active_users=56; owner=team-16. This record is an independent workspace snapshot.\n[P17] Record W017: region=EU; plan=Pro; backups=enabled; active_users=57; owner=team-17. This record is an independent workspace snapshot.\n[P18] Record W018: region=US; plan=Basic; backups=enabled; active_users=58; owner=team-18. This record is an independent workspace snapshot.\n[P19] Record W019: region=EU; plan=Pro; backups=enabled; active_users=59; owner=team-19. This record is an independent workspace snapshot.\n[P20] Record W020: region=EU; plan=Basic; backups=disabled; active_users=60; owner=team-20. This record is an independent workspace snapshot.\n[P21] Record W021: region=US; plan=Pro; backups=enabled; active_users=61; owner=team-21. This record is an independent workspace snapshot.\n[P22] Record W022: region=EU; plan=Basic; backups=enabled; active_users=62; owner=team-22. This record is an independent workspace snapshot.\n[P23] Record W023: region=EU; plan=Pro; backups=enabled; active_users=63; owner=team-23. This record is an independent workspace snapshot.\n[P24] Record W024: region=US; plan=Basic; backups=disabled; active_users=64; owner=team-24. This record is an independent workspace snapshot.\n[P25] Record W025: region=EU; plan=Pro; backups=enabled; active_users=65; owner=team-25. This record is an independent workspace snapshot.\n[P26] Record W026: region=EU; plan=Basic; backups=enabled; active_users=66; owner=team-26. This record is an independent workspace snapshot.\n[P27] Record W027: region=US; plan=Pro; backups=enabled; active_users=67; owner=team-27. This record is an independent workspace snapshot.\n[P28] Record W028: region=EU; plan=Basic; backups=disabled; active_users=68; owner=team-28. This record is an independent workspace snapshot.\n[P29] Record W029: region=EU; plan=Pro; backups=enabled; active_users=69; owner=team-29. This record is an independent workspace snapshot.\n[P30] Record W030: region=US; plan=Basic; backups=enabled; active_users=70; owner=team-30. This record is an independent workspace snapshot.\n[P31] Record W031: region=EU; plan=Pro; backups=enabled; active_users=71; owner=team-31. This record is an independent workspace snapshot.\n[P32] Record W032: region=EU; plan=Basic; backups=disabled; active_users=72; owner=team-32. This record is an independent workspace snapshot.\n[P33] Record W033: region=US; plan=Pro; backups=enabled; active_users=73; owner=team-33. This record is an independent workspace snapshot.\n[P34] Record W034: region=EU; plan=Basic; backups=enabled; active_users=74; owner=team-34. This record is an independent workspace snapshot.\n[P35] Record W035: region=EU; plan=Pro; backups=enabled; active_users=75; owner=team-35. This record is an independent workspace snapshot.\n[P36] Record W036: region=US; plan=Basic; backups=disabled; active_users=76; owner=team-36. This record is an independent workspace snapshot.\n[P37] Record W037: region=EU; plan=Pro; backups=enabled; active_users=77; owner=team-37. This record is an independent workspace snapshot.\n[P38] Record W038: region=EU; plan=Basic; backups=enabled; active_users=78; owner=team-38. This record is an independent workspace snapshot.\n[P39] Record W039: region=US; plan=Pro; backups=enabled; active_users=79; owner=team-39. This record is an independent workspace snapshot.\n[P40] Record W040: region=EU; plan=Basic; backups=disabled; active_users=80; owner=team-40. This record is an independent workspace snapshot.\n[P41] Record W041: region=EU; plan=Pro; backups=enabled; active_users=81; owner=team-41. This record is an independent workspace snapshot.\n[P42] Record W042: region=US; plan=Basic; backups=enabled; active_users=82; owner=team-42. This record is an independent workspace snapshot.\n[P43] Record W043: region=EU; plan=Pro; backups=enabled; active_users=83; owner=team-43. This record is an independent workspace snapshot.\n[P44] Record W044: region=EU; plan=Basic; backups=disabled; active_users=84; owner=team-44. This record is an independent workspace snapshot.\n[P45] Record W045: region=US; plan=Pro; backups=enabled; active_users=85; owner=team-45. This record is an independent workspace snapshot.\n[P46] Record W046: region=EU; plan=Basic; backups=enabled; active_users=86; owner=team-46. This record is an independent workspace snapshot.\n[P47] Record W047: region=EU; plan=Pro; backups=enabled; active_users=87; owner=team-47. This record is an independent workspace snapshot.\n[P48] Record W048: region=US; plan=Basic; backups=disabled; active_users=88; owner=team-48. This record is an independent workspace snapshot.\n[P49] Record W049: region=EU; plan=Pro; backups=enabled; active_users=89; owner=team-49. This record is an independent workspace snapshot.\n[P50] Record W050: region=EU; plan=Basic; backups=enabled; active_users=90; owner=team-50. This record is an independent workspace snapshot.\n[P51] Record W051: region=US; plan=Pro; backups=enabled; active_users=91; owner=team-51. This record is an independent workspace snapshot.\n[P52] Record W052: region=EU; plan=Basic; backups=disabled; active_users=92; owner=team-52. This record is an independent workspace snapshot.\n[P53] Record W053: region=EU; plan=Pro; backups=enabled; active_users=93; owner=team-53. This record is an independent workspace snapshot.\n[P54] Record W054: region=US; plan=Basic; backups=enabled; active_users=94; owner=team-54. This record is an independent workspace snapshot.\n[P55] Record W055: region=EU; plan=Pro; backups=enabled; active_users=95; owner=team-55. This record is an independent workspace snapshot.\n[P56] Record W056: region=EU; plan=Basic; backups=disabled; active_users=96; owner=team-56. This record is an independent workspace snapshot.\n[P57] Record W057: region=US; plan=Pro; backups=enabled; active_users=97; owner=team-57. This record is an independent workspace snapshot.\n[P58] Record W058: region=EU; plan=Basic; backups=enabled; active_users=98; owner=team-58. This record is an independent workspace snapshot.\n[P59] Record W059: region=EU; plan=Pro; backups=enabled; active_users=99; owner=team-59. This record is an independent workspace snapshot.\n[P60] Record W060: region=US; plan=Basic; backups=disabled; active_users=100; owner=team-60. This record is an independent workspace snapshot.\nList every EU workspace as a numbered list. For each, report its ID, plan, backup status, active user count, owner, and source passage. Include every matching workspace; do not summarize.",
+          "metrics": {
+            "model": "qwen3:0.6b",
+            "created_at": "2026-10-20T19:18:05.879178288Z",
+            "done": true,
+            "done_reason": "length",
+            "total_duration": 1335333007,
+            "load_duration": 789119,
+            "prompt_eval_count": 2669,
+            "prompt_eval_cached_count": 29,
+            "prompt_eval_duration": 218842000,
+            "eval_count": 256,
+            "eval_duration": 1086864000,
+            "response": "1. **W001**  \n   - Region: EU  \n   - Plan: Pro  \n   - Backups: enabled  \n   - Active users: 41  \n   - Owner: team-01  \n   - Source passage: [P01]  \n\n2. **W002**  \n   - Region: EU  \n   - Plan: Basic  \n   - Backups: enabled  \n   - Active users: 42  \n   - Owner: team-02  \n   - Source passage: [P02]  \n\n3. **W003**  \n   - Region: US  \n   - Plan: Pro  \n   - Backups: enabled  \n   - Active users: 43  \n   - Owner: team-03  \n   - Source passage: [P03]  \n\n4. **W004**  \n   - Region: EU  \n   - Plan: Basic  \n   - Backups: disabled  \n   - Active users: 44  \n   - Owner: team-04  \n   - Source passage: [P04]  \n\n5. **W005**  \n   - Region: EU  \n   - Plan: Pro  \n   - Backups: enabled  \n",
+            "thinking": "",
+            "wall_s": 1.3359406380004657,
+            "ttft_s": 0.2488504329994612,
+            "generation_tokens_s": 235.54004916898526
+          }
+        }
+      ],
+      "quality": [
+        {
+          "task": "lookup",
+          "prompt": "Documents:\n[P1] Unopened standard items can be returned within 21 days of delivery. The handling fee is 12 USD.\n\nQuestion:\nWhat is the return deadline in days? Return only JSON with keys \"days\" (integer) and \"source\" (passage ID).",
+          "expected": {
+            "days": 21,
+            "source": "P1"
+          },
+          "parsed": {
+            "days": 21,
+            "source": "P1"
+          },
+          "passed": true,
+          "metrics": {
+            "model": "qwen3:0.6b",
+            "created_at": "2026-10-20T19:18:06.126808981Z",
+            "done": true,
+            "done_reason": "stop",
+            "total_duration": 244882738,
+            "load_duration": 800971,
+            "prompt_eval_count": 95,
+            "prompt_eval_cached_count": 24,
+            "prompt_eval_duration": 10251000,
+            "eval_count": 19,
+            "eval_duration": 60759000,
+            "response": "{\n  \"days\": 21,\n  \"source\": \"P1\"\n}",
+            "thinking": "",
+            "wall_s": 0.24550220099990838,
+            "ttft_s": 0.1846248949987057,
+            "generation_tokens_s": 312.71087410918545
+          }
+        },
+        {
+          "task": "exception",
+          "prompt": "Documents:\n[P1] Standard items are returnable within 30 days if unused.\n[P2] Clearance items are final sale and cannot be returned, even if unused.\n[P3] Defective products have a separate repair program.\n\nQuestion:\nAn unused, non-defective clearance item was delivered 10 days ago. Is it returnable? Return only JSON with keys \"eligible\" (boolean) and \"source\" (the decisive passage ID).",
+          "expected": {
+            "eligible": false,
+            "source": "P2"
+          },
+          "parsed": {
+            "eligible": false,
+            "source": "P1"
+          },
+          "passed": false,
+          "metrics": {
+            "model": "qwen3:0.6b",
+            "created_at": "2026-10-20T19:18:06.205703476Z",
+            "done": true,
+            "done_reason": "stop",
+            "total_duration": 76769289,
+            "load_duration": 829795,
+            "prompt_eval_count": 127,
+            "prompt_eval_cached_count": 29,
+            "prompt_eval_duration": 12446000,
+            "eval_count": 17,
+            "eval_duration": 53840000,
+            "response": "{\n  \"eligible\": false,\n  \"source\": \"P1\"\n}",
+            "thinking": "",
+            "wall_s": 0.07736435599872493,
+            "ttft_s": 0.023568393000459764,
+            "generation_tokens_s": 315.7503714710253
+          }
+        },
+        {
+          "task": "dated_override",
+          "prompt": "Documents:\n[P1] January policy: Standard workspaces allow 24 members; Pro workspaces allow 64 members.\n[P2] February policy: Pro trials have a limit of 8 members.\n[P3] March policy: The paid Pro limit is reduced to 32 members, replacing the January paid Pro limit. Trial limits are unchanged.\n\nQuestion:\nUnder the latest policy, what is the member limit for a paid Pro workspace that is not on a trial? Return only JSON with keys \"limit\" (integer) and \"source\" (decisive passage ID).",
+          "expected": {
+            "limit": 32,
+            "source": "P3"
+          },
+          "parsed": {
+            "limit": 32,
+            "source": "P3"
+          },
+          "passed": true,
+          "metrics": {
+            "model": "qwen3:0.6b",
+            "created_at": "2026-10-20T19:18:06.311255825Z",
+            "done": true,
+            "done_reason": "stop",
+            "total_duration": 102589845,
+            "load_duration": 860853,
+            "prompt_eval_count": 154,
+            "prompt_eval_cached_count": 29,
+            "prompt_eval_duration": 14110000,
+            "eval_count": 23,
+            "eval_duration": 75477000,
+            "response": "```json\n{\n  \"limit\": 32,\n  \"source\": \"P3\"\n}\n```",
+            "thinking": "",
+            "wall_s": 0.10344249199988553,
+            "ttft_s": 0.02645831300105783,
+            "generation_tokens_s": 304.72859281635465
+          }
+        },
+        {
+          "task": "multiple_conditions",
+          "prompt": "Documents:\n[P1] A pilot requires an EU region and enabled backups.\n[P2] Workspace roster: Aster: EU, backups enabled, 120 active users; Birch: US, backups enabled, 150 active users; Cedar: EU, backups disabled, 200 active users; Dune: EU, backups enabled, 60 active users.\n[P3] The pilot also requires at least 100 active users.\n\nQuestion:\nWhich workspaces meet every pilot requirement? Return only JSON with one key \"workspaces\", an alphabetically sorted array of names.",
+          "expected": {
+            "workspaces": [
+              "Aster"
+            ]
+          },
+          "parsed": {
+            "workspaces": [
+              "Aster",
+              "Cedar",
+              "Dune"
+            ]
+          },
+          "passed": false,
+          "metrics": {
+            "model": "qwen3:0.6b",
+            "created_at": "2026-10-20T19:18:06.442705182Z",
+            "done": true,
+            "done_reason": "stop",
+            "total_duration": 128232028,
+            "load_duration": 911277,
+            "prompt_eval_count": 157,
+            "prompt_eval_cached_count": 29,
+            "prompt_eval_duration": 14853000,
+            "eval_count": 30,
+            "eval_duration": 97110000,
+            "response": "```json\n{\n  \"workspaces\": [\n    \"Aster\",\n    \"Cedar\",\n    \"Dune\"\n  ]\n}\n```",
+            "thinking": "",
+            "wall_s": 0.12902087600014056,
+            "ttft_s": 0.03189199700136669,
+            "generation_tokens_s": 308.9280197713933
+          }
+        },
+        {
+          "task": "calculation",
+          "prompt": "Documents:\n[P1] The monthly base price is 120 USD and includes 120 requests.\n[P2] Each additional request costs 0.08 USD.\n[P3] Annual-contract customers receive a 25% discount on the additional-request charges only. The base price is not discounted. No taxes or other charges apply.\n\nQuestion:\nAn annual-contract customer uses 170 requests in one month. What is the total monthly bill? Return only JSON with one numeric key \"total_usd\".",
+          "expected": {
+            "total_usd": 123
+          },
+          "parsed": {
+            "total_usd": 120
+          },
+          "passed": false,
+          "metrics": {
+            "model": "qwen3:0.6b",
+            "created_at": "2026-10-20T19:18:06.521867535Z",
+            "done": true,
+            "done_reason": "stop",
+            "total_duration": 76522649,
+            "load_duration": 766577,
+            "prompt_eval_count": 144,
+            "prompt_eval_cached_count": 29,
+            "prompt_eval_duration": 13688000,
+            "eval_count": 15,
+            "eval_duration": 47411000,
+            "response": "```json\n{\"total_usd\": 120}\n```",
+            "thinking": "",
+            "wall_s": 0.07710652599780587,
+            "ttft_s": 0.02979207899988978,
+            "generation_tokens_s": 316.3822741557866
+          }
+        },
+        {
+          "task": "abstention",
+          "prompt": "Documents:\n[P1] The Basic plan costs 15 USD per month and includes email support.\n[P2] The Pro plan costs 40 USD per month and includes phone support.\n[P3] Both plans allow data export as CSV.\n\nQuestion:\nHow many hours is the guaranteed Pro phone-support response time? If the documents do not specify it, use null and no sources. Return only JSON with keys \"hours\" and \"sources\" (array of passage IDs).",
+          "expected": {
+            "hours": null,
+            "sources": []
+          },
+          "parsed": {
+            "hours": null,
+            "sources": []
+          },
+          "passed": true,
+          "metrics": {
+            "model": "qwen3:0.6b",
+            "created_at": "2026-10-20T19:18:06.607696639Z",
+            "done": true,
+            "done_reason": "stop",
+            "total_duration": 83330783,
+            "load_duration": 853980,
+            "prompt_eval_count": 131,
+            "prompt_eval_cached_count": 30,
+            "prompt_eval_duration": 12458000,
+            "eval_count": 18,
+            "eval_duration": 56993000,
+            "response": "```json\n{\n  \"hours\": null,\n  \"sources\": []\n}\n```",
+            "thinking": "",
+            "wall_s": 0.08400853399871266,
+            "ttft_s": 0.026928507999400608,
+            "generation_tokens_s": 315.8282596108294
+          }
+        }
+      ],
+      "gpu_samples": [
+        {
+          "monotonic_s": 30953.081588128,
+          "used_mib": 13.0,
+          "free_mib": 5793.0,
+          "utilization_pct": 20.0,
+          "temperature_c": 76.0
+        },
+        {
+          "monotonic_s": 30953.517065023,
+          "used_mib": 30.0,
+          "free_mib": 5775.0,
+          "utilization_pct": 0.0,
+          "temperature_c": 75.0
+        },
+        {
+          "monotonic_s": 30953.943492301,
+          "used_mib": 130.0,
+          "free_mib": 5675.0,
+          "utilization_pct": 2.0,
+          "temperature_c": 74.0
+        },
+        {
+          "monotonic_s": 30954.371867847,
+          "used_mib": 152.0,
+          "free_mib": 5654.0,
+          "utilization_pct": 3.0,
+          "temperature_c": 74.0
+        },
+        {
+          "monotonic_s": 30954.800095957,
+          "used_mib": 540.0,
+          "free_mib": 5265.0,
+          "utilization_pct": 6.0,
+          "temperature_c": 73.0
+        },
+        {
+          "monotonic_s": 30955.225072125,
+          "used_mib": 1040.0,
+          "free_mib": 4765.0,
+          "utilization_pct": 11.0,
+          "temperature_c": 73.0
+        },
+        {
+          "monotonic_s": 30955.652790587,
+          "used_mib": 1056.0,
+          "free_mib": 4749.0,
+          "utilization_pct": 61.0,
+          "temperature_c": 75.0
+        },
+        {
+          "monotonic_s": 30956.080847329,
+          "used_mib": 1056.0,
+          "free_mib": 4749.0,
+          "utilization_pct": 92.0,
+          "temperature_c": 80.0
+        },
+        {
+          "monotonic_s": 30956.50703988,
+          "used_mib": 1056.0,
+          "free_mib": 4749.0,
+          "utilization_pct": 91.0,
+          "temperature_c": 81.0
+        },
+        {
+          "monotonic_s": 30956.934472029,
+          "used_mib": 1058.0,
+          "free_mib": 4747.0,
+          "utilization_pct": 93.0,
+          "temperature_c": 80.0
+        },
+        {
+          "monotonic_s": 30957.360805122,
+          "used_mib": 1058.0,
+          "free_mib": 4747.0,
+          "utilization_pct": 93.0,
+          "temperature_c": 81.0
+        },
+        {
+          "monotonic_s": 30957.789902501,
+          "used_mib": 1058.0,
+          "free_mib": 4747.0,
+          "utilization_pct": 93.0,
+          "temperature_c": 81.0
+        },
+        {
+          "monotonic_s": 30958.216233671,
+          "used_mib": 1058.0,
+          "free_mib": 4747.0,
+          "utilization_pct": 91.0,
+          "temperature_c": 80.0
+        },
+        {
+          "monotonic_s": 30958.642646162,
+          "used_mib": 1058.0,
+          "free_mib": 4747.0,
+          "utilization_pct": 90.0,
+          "temperature_c": 81.0
+        },
+        {
+          "monotonic_s": 30959.072490001,
+          "used_mib": 1058.0,
+          "free_mib": 4747.0,
+          "utilization_pct": 99.0,
+          "temperature_c": 81.0
+        },
+        {
+          "monotonic_s": 30959.501200038,
+          "used_mib": 1058.0,
+          "free_mib": 4747.0,
+          "utilization_pct": 94.0,
+          "temperature_c": 82.0
+        },
+        {
+          "monotonic_s": 30959.92864959,
+          "used_mib": 1058.0,
+          "free_mib": 4747.0,
+          "utilization_pct": 92.0,
+          "temperature_c": 82.0
+        },
+        {
+          "monotonic_s": 30960.355164391,
+          "used_mib": 1058.0,
+          "free_mib": 4747.0,
+          "utilization_pct": 0.0,
+          "temperature_c": 77.0
+        },
+        {
+          "monotonic_s": 30960.786497793,
+          "used_mib": 1058.0,
+          "free_mib": 4747.0,
+          "utilization_pct": 91.0,
+          "temperature_c": 81.0
+        },
+        {
+          "monotonic_s": 30961.215429103,
+          "used_mib": 1058.0,
+          "free_mib": 4747.0,
+          "utilization_pct": 68.0,
+          "temperature_c": 81.0
+        },
+        {
+          "monotonic_s": 30961.643234166,
+          "used_mib": 1058.0,
+          "free_mib": 4747.0,
+          "utilization_pct": 92.0,
+          "temperature_c": 82.0
+        },
+        {
+          "monotonic_s": 30962.072349528,
+          "used_mib": 1058.0,
+          "free_mib": 4747.0,
+          "utilization_pct": 93.0,
+          "temperature_c": 82.0
+        },
+        {
+          "monotonic_s": 30962.498368587,
+          "used_mib": 1058.0,
+          "free_mib": 4747.0,
+          "utilization_pct": 43.0,
+          "temperature_c": 79.0
+        },
+        {
+          "monotonic_s": 30962.926026897,
+          "used_mib": 1060.0,
+          "free_mib": 4745.0,
+          "utilization_pct": 89.0,
+          "temperature_c": 80.0
+        }
+      ],
+      "first_request": {
+        "model": "qwen3:0.6b",
+        "created_at": "2026-10-20T19:17:59.061384088Z",
+        "done": true,
+        "done_reason": "stop",
+        "total_duration": 2488023449,
+        "load_duration": 2307173060,
+        "prompt_eval_count": 41,
+        "prompt_eval_cached_count": 0,
+        "prompt_eval_duration": 139319000,
+        "eval_count": 3,
+        "eval_duration": 39896000,
+        "response": "READY.",
+        "thinking": "",
+        "wall_s": 2.488762733999465,
+        "ttft_s": 2.4489116900003864,
+        "generation_tokens_s": 75.19550832163625
+      },
+      "loaded_state": {
+        "models": [
+          {
+            "name": "qwen3:0.6b",
+            "model": "qwen3:0.6b",
+            "size": 930401484,
+            "digest": "7df6b6e09427a769808717c0a93cadc4ae99ed4eb8bf5ca557c90846becea435",
+            "details": {
+              "parent_model": "",
+              "format": "gguf",
+              "family": "qwen3",
+              "families": [
+                "qwen3"
+              ],
+              "parameter_size": "751.63M",
+              "quantization_level": "Q4_K_M"
+            },
+            "expires_at": "2026-10-20T16:27:59.061544237-03:00",
+            "size_vram": 930401484,
+            "context_length": 4096,
+            "runner": "llamacpp"
+          }
+        ]
+      },
+      "loaded_memory": {
+        "MemTotal_kib": 15566716,
+        "MemAvailable_kib": 6499468,
+        "SwapTotal_kib": 8388604,
+        "SwapFree_kib": 3513604
+      },
+      "warmup": {
+        "model": "qwen3:0.6b",
+        "created_at": "2026-10-20T19:17:59.118112791Z",
+        "done": true,
+        "done_reason": "stop",
+        "total_duration": 55435575,
+        "load_duration": 703239,
+        "prompt_eval_count": 44,
+        "prompt_eval_cached_count": 24,
+        "prompt_eval_duration": 10227000,
+        "eval_count": 13,
+        "eval_duration": 43284000,
+        "response": "Organizing documents effectively ensures clarity and accessibility for all users.",
+        "thinking": "",
+        "wall_s": 0.05580474200178287,
+        "ttft_s": 0.01254685599997174,
+        "generation_tokens_s": 300.3419277331115
+      },
+      "unloaded_state": {
+        "models": []
+      },
+      "summary": {
+        "short": {
+          "median_generation_tokens_s": 303.7079658091267,
+          "median_ttft_s": 0.19124937700325972,
+          "median_wall_s": 0.8612180560012348,
+          "prompt_tokens": [
+            96,
+            96,
+            96
+          ],
+          "generated_tokens": [
+            256,
+            256,
+            195
+          ]
+        },
+        "long": {
+          "median_generation_tokens_s": 235.54004916898526,
+          "median_ttft_s": 0.25106143899756717,
+          "median_wall_s": 1.3359406380004657,
+          "prompt_tokens": [
+            2669,
+            2669,
+            2669
+          ],
+          "generated_tokens": [
+            256,
+            256,
+            256
+          ]
+        },
+        "quality_passes": 3,
+        "quality_total": 6,
+        "peak_gpu_used_mib": 1060.0,
+        "peak_gpu_utilization_pct": 99.0,
+        "peak_temperature_c": 82.0
+      }
+    }
+  ],
+  "finished_at": "2026-10-20T16:18:06.894131-03:00",
+  "final_gpu": {
+    "monotonic_s": 30963.400145354,
+    "used_mib": 13.0,
+    "free_mib": 5793.0,
+    "utilization_pct": 0.0,
+    "temperature_c": 77.0
+  },
+  "final_memory": {
+    "MemTotal_kib": 15566716,
+    "MemAvailable_kib": 7021688,
+    "SwapTotal_kib": 8388604,
+    "SwapFree_kib": 3513872
+  }
+}

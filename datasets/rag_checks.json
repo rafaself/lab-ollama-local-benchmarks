@@ -1,0 +1,56 @@
+[
+  {
+    "id": "lookup",
+    "documents": "[P1] Unopened standard items can be returned within 21 days of delivery. The handling fee is 12 USD.",
+    "question": "What is the return deadline in days? Return only JSON with keys \"days\" (integer) and \"source\" (passage ID).",
+    "expected": {
+      "days": 21,
+      "source": "P1"
+    }
+  },
+  {
+    "id": "exception",
+    "documents": "[P1] Standard items are returnable within 30 days if unused.\n[P2] Clearance items are final sale and cannot be returned, even if unused.\n[P3] Defective products have a separate repair program.",
+    "question": "An unused, non-defective clearance item was delivered 10 days ago. Is it returnable? Return only JSON with keys \"eligible\" (boolean) and \"source\" (the decisive passage ID).",
+    "expected": {
+      "eligible": false,
+      "source": "P2"
+    }
+  },
+  {
+    "id": "dated_override",
+    "documents": "[P1] January policy: Standard workspaces allow 24 members; Pro workspaces allow 64 members.\n[P2] February policy: Pro trials have a limit of 8 members.\n[P3] March policy: The paid Pro limit is reduced to 32 members, replacing the January paid Pro limit. Trial limits are unchanged.",
+    "question": "Under the latest policy, what is the member limit for a paid Pro workspace that is not on a trial? Return only JSON with keys \"limit\" (integer) and \"source\" (decisive passage ID).",
+    "expected": {
+      "limit": 32,
+      "source": "P3"
+    }
+  },
+  {
+    "id": "multiple_conditions",
+    "documents": "[P1] A pilot requires an EU region and enabled backups.\n[P2] Workspace roster: Aster: EU, backups enabled, 120 active users; Birch: US, backups enabled, 150 active users; Cedar: EU, backups disabled, 200 active users; Dune: EU, backups enabled, 60 active users.\n[P3] The pilot also requires at least 100 active users.",
+    "question": "Which workspaces meet every pilot requirement? Return only JSON with one key \"workspaces\", an alphabetically sorted array of names.",
+    "expected": {
+      "workspaces": [
+        "Aster"
+      ]
+    }
+  },
+  {
+    "id": "calculation",
+    "documents": "[P1] The monthly base price is 120 USD and includes 120 requests.\n[P2] Each additional request costs 0.08 USD.\n[P3] Annual-contract customers receive a 25% discount on the additional-request charges only. The base price is not discounted. No taxes or other charges apply.",
+    "question": "An annual-contract customer uses 170 requests in one month. What is the total monthly bill? Return only JSON with one numeric key \"total_usd\".",
+    "expected": {
+      "total_usd": 123
+    }
+  },
+  {
+    "id": "abstention",
+    "documents": "[P1] The Basic plan costs 15 USD per month and includes email support.\n[P2] The Pro plan costs 40 USD per month and includes phone support.\n[P3] Both plans allow data export as CSV.",
+    "question": "How many hours is the guaranteed Pro phone-support response time? If the documents do not specify it, use null and no sources. Return only JSON with keys \"hours\" and \"sources\" (array of passage IDs).",
+    "expected": {
+      "hours": null,
+      "sources": []
+    }
+  }
+]
